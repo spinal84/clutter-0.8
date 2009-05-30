@@ -219,7 +219,6 @@ clutter_HEADERS = \
 	$(source_h) \
 	clutter-json.h \
 	clutter-enum-types.h \
-	clutter-version.h \
 	clutter.h
 
 DISTCLEANFILES = \

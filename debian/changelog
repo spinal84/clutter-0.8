@@ -1,4 +1,4 @@
-clutter (0.8.2-0maemo66~unreleased) unstable; urgency=low
+clutter (0.8.2-0maemo66) unstable; urgency=low
 
   * clutter/x11/clutter-x11-texture-pixmap.c: Small documentation update.
   

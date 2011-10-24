@@ -13,13 +13,6 @@ static ClutterBackendEGL *backend_singleton = NULL;
 
 G_DEFINE_TYPE (ClutterBackendEGL, clutter_backend_egl, CLUTTER_TYPE_BACKEND);
 
-static void
-clutter_backend_at_exit (void)
-{
-  if (backend_singleton)
-    g_object_run_dispose (G_OBJECT (backend_singleton));
-}
-
 static gboolean
 clutter_backend_egl_pre_parse (ClutterBackend  *backend,
                                GError         **error)
@@ -39,8 +32,6 @@ clutter_backend_egl_post_parse (ClutterBackend  *backend,
   status = eglInitialize (backend_egl->edpy, 
 			  &backend_egl->egl_version_major, 
 			  &backend_egl->egl_version_minor);
-  
-  g_atexit (clutter_backend_at_exit);
 
   if (status != EGL_TRUE)
     {

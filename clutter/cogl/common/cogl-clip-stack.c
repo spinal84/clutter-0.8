@@ -31,6 +31,7 @@
 #include "cogl-clip-stack.h"
 #include "cogl-util.h"
 #include "cogl-internal.h"
+#include <math.h>
 
 /* These are defined in the particular backend (float in GL vs fixed
    in GL ES) */
@@ -162,6 +163,66 @@ _cogl_clip_stack_add (const CoglClipStackEntry *entry, int depth)
 			    depth == (has_clip_planes ? 2 : 1));
 }
 
+/* Get angles of rotation from the model matrix.
+ * Use degrees instead of radians because of the precision loss */
+static void
+cogl_rotation_get_from_mtx(float m[16], gint rotation[3])
+{
+  float heading, attitude, bank;
+  if (m[4] > 0.998)
+  {
+    /* singularity at north pole */
+    heading = atan2(m[2], m[10]);
+    attitude = G_PI / 2;
+    bank = 0;
+  }
+  else  if (m[4] < -0.998)
+  {
+    /* singularity at south pole */
+    heading = atan2(m[2], m[10]);
+    attitude = -G_PI / 2;
+    bank = 0;
+  }
+  else
+  {
+    heading = atan2(-m[4], m[0]);
+    bank = atan2(-m[7], m[6]);
+    attitude = asin(m[4]);
+  }
+  /* convert to degrees, rounding up */
+  rotation[0] = (heading * 180.0f / G_PI) + (heading < 0.0f ? -0.5f : 0.5f);
+  rotation[1] = (attitude * 180.0f / G_PI) + (attitude < 0.0f ? -0.5f : 0.5f);
+  rotation[2] = (bank * 180.0f / G_PI) + (bank < 0.0f ? -0.5f : 0.5f);
+}
+
+static gboolean
+cogl_get_clip_rectangular(gint rotation[3])
+{
+  guint x, y, z;
+
+  x = abs(rotation[0]);
+  y = abs(rotation[1]);
+  z = abs(rotation[2]);
+
+  return (x == 0 || x == 180) && (y == 0 || y == 180) && (z == 0 || z == 180);
+}
+
+static gboolean
+cogl_get_clip_rectangular_90(gint rotation[3])
+{
+  guint x, y, z;
+
+  x = abs(rotation[0]);
+  y = abs(rotation[1]);
+  z = abs(rotation[2]);
+
+  /* Well, there are other cases as well, but for now those should be enough */
+  return
+      ((x == 90 || x == 270) && (y ==  0 || y == 180) && (z ==  0 || z == 180)) ||
+      ((x == 0  || x == 180) && (y == 90 || y == 270) && (z ==  0 || z == 180)) ||
+      ((x == 0  || x == 180) && (y ==  0 || y == 180) && (z == 90 || z == 270));
+}
+
 void
 cogl_clip_set (ClutterFixed x_offset,
 	       ClutterFixed y_offset,
@@ -169,6 +230,8 @@ cogl_clip_set (ClutterFixed x_offset,
 	       ClutterFixed height)
 {
   CoglClipStackEntry *entry = g_slice_new (CoglClipStackEntry);
+  gint rotation[3];
+  gboolean rotated90 = FALSE;
 
   /* Make a new entry */
   entry->clear = FALSE;
@@ -178,30 +241,38 @@ cogl_clip_set (ClutterFixed x_offset,
   entry->height = height;
 
   cogl_get_modelview_matrix_f (entry->matrix);
-
+  cogl_rotation_get_from_mtx (entry->matrix, rotation);
 
   /* now check for simple (rectangular!) case */
-  /* TODO: we don't check for the case where rotated by
-   * a multiple of 90 degrees */
   entry->is_rectangular = FALSE;
-  if (entry->matrix[1]==0 && entry->matrix[2]==0 &&
-      entry->matrix[4]==0 && entry->matrix[6]==0 &&
-      entry->matrix[8]==0 && entry->matrix[9]==0)
+  if ( (rotated90 = cogl_get_clip_rectangular_90(rotation)) || cogl_get_clip_rectangular(rotation) )
     {
         ClutterFixed viewport[4];
         float proj[16];
         ClutterVertex pta,ptb;
 
         entry->is_rectangular = TRUE;
-
-        pta.x = entry->x_offset;
-        pta.y = entry->y_offset;
-        pta.z = 0;
-        ptb.x = entry->x_offset + entry->width;
-        ptb.y = entry->y_offset + entry->height;
-        ptb.z = 0;
-
         cogl_get_viewport (viewport);
+
+        if((rotated90 && (viewport[3] > viewport[2])) || rotation[0] == -180)
+          {
+            pta.x = entry->y_offset;
+            pta.y = entry->x_offset;
+            pta.z = 0;
+            ptb.x = entry->y_offset + entry->height;
+            ptb.y = entry->x_offset + entry->width;
+            ptb.z = 0;
+          }
+        else
+          {
+            pta.x = entry->x_offset;
+            pta.y = entry->y_offset;
+            pta.z = 0;
+            ptb.x = entry->x_offset + entry->width;
+            ptb.y = entry->y_offset + entry->height;
+            ptb.z = 0;
+          }
+
         cogl_get_projection_matrix_f (proj);
 
         pta = cogl_util_unproject_f(entry->matrix, proj, viewport, pta);
@@ -225,7 +296,6 @@ cogl_clip_set (ClutterFixed x_offset,
             entry->scr_y_2 = t;
           }
     }
-
   /* Store it in the stack */
   cogl_clip_stack_top = g_list_prepend (cogl_clip_stack_top, entry);
 

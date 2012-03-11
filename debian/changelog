@@ -1,3 +1,10 @@
+clutter (0.8.2-0maemo67+0m5) unstable; urgency=low
+
+  * clutter/cogl/common/cogl-clip-stack.c: Apply clipping scissors when
+    rotated by a multiple of 90 degrees.
+
+ -- Ivaylo Dimitrov <freemangordon@abv.bg>  Sun, 11 Mar 2012 12:05:33 +0200
+
 clutter (0.8.2-0maemo66) unstable; urgency=low
 
   * clutter/x11/clutter-x11-texture-pixmap.c: Small documentation update.

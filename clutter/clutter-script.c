@@ -1432,9 +1432,11 @@ clutter_script_construct_object (ClutterScript *script,
                                              oinfo->properties,
                                              &construct_params);
 
+      G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       object = g_object_newv (oinfo->gtype,
                               construct_params->len,
                               (GParameter *) construct_params->data);
+      G_GNUC_END_IGNORE_DEPRECATIONS
 
       for (i = 0; i < construct_params->len; i++)
         {

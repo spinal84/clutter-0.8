@@ -2,13 +2,26 @@ Source: clutter
 Section: libs
 Priority: optional
 Maintainer: Arthur Demchenkov <spinal.by@gmail.com>
-Build-Depends: debhelper, cdbs (>= 0.4), libgles2-dev [armel] | libgles2-sgx-img-dev [armel], libgl-dev [!armel], libgtk2.0-dev, libxcomposite-dev, libxi-dev, libxdamage-dev, opengles-sgx-img-common-dev [armel]
+Build-Depends:
+ debhelper,
+ cdbs (>= 0.4),
+ libgles2-dev [armel] | libgles2-sgx-img-dev [armel],
+ libgl-dev [!armel],
+ libgtk2.0-dev,
+ libxcomposite-dev,
+ libxi-dev,
+ libxdamage-dev,
+ opengles-sgx-img-common-dev [armel]
 Standards-Version: 3.7.2
 
 Package: libclutter-0.8-0
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libgles2-sgx-img [armel] | libgles2 [armel], libgl1 [!armel]
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+ libgles2-sgx-img [armel] | libgles2 [armel],
+ libgl1 [!armel]
 Description: Open GL based interactive canvas library
  Clutter is an Open GL based interactive canvas library, designed for creating
  fast, mainly 2D single window applications such as media box UIs,
@@ -17,7 +30,14 @@ Description: Open GL based interactive canvas library
 Package: libclutter-0.8-dev
 Section: libdevel
 Architecture: any
-Depends: libclutter-0.8-0 (= ${Source-Version}), pkg-config, libgtk2.0-dev, libgles2-dev [armel] | libgles2-sgx-img-dev [armel], opengles-sgx-img-common-dev [armel], libgl-dev [!armel], ${misc:Depends}
+Depends:
+ ${misc:Depends},
+ libclutter-0.8-0 (= ${Source-Version}),
+ pkg-config,
+ libgtk2.0-dev,
+ libgles2-dev [armel] | libgles2-sgx-img-dev [armel],
+ opengles-sgx-img-common-dev [armel],
+ libgl-dev [!armel]
 Suggests: libclutter-doc
 Description: Open GL based interactive canvas library (development files)
  Clutter is an Open GL based interactive canvas library, designed for creating

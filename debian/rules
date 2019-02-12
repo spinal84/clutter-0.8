@@ -1,27 +1,17 @@
 #!/usr/bin/make -f
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/class/autotools.mk
+%:
+	dh $@
 
-DEB_COMPRESS_EXCLUDE = .c
-ifeq ($(DEB_BUILD_ARCH),armel)
-  DEB_CONFIGURE_EXTRA_FLAGS := --disable-gtk-doc --with-flavour=eglx \
-			     --with-gles=2.0 --enable-debug=no
+ifeq ($(DEB_HOST_ARCH),$(findstring $(DEB_HOST_ARCH),armel armhf))
+CONFFLAGS += --with-flavour=eglx
 else
-  DEB_CONFIGURE_EXTRA_FLAGS := --disable-gtk-doc --with-flavour=glx \
-			     --with-gles=2.0 --enable-debug=no
+CONFFLAGS += --with-flavour=glx
 endif
-
-DEB_DH_STRIP_ARGS := --dbg-package=libclutter-0.8-0
 
 CFLAGS := -DG_DEBUG_DISABLE -Winline
 
-makebuilddir/libclutter-0.8-0::
-	[ -f configure ] || autoreconf -f -i
-
-# common-binary-predeb-arch:: list-missing
-
-# Save SSU d/l volume.
-ifeq ($(DEB_BUILD_ARCH),armel)
-binary-post-install/libclutter-0.8-0::
-	rm -rf "debian/$(cdbs_curpkg)/usr/share/doc"
-endif
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		--enable-debug=no \
+		--with-gles=2.0 \
+		$(CONFFLAGS)

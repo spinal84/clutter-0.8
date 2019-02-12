@@ -4,7 +4,6 @@ Priority: optional
 Maintainer: Arthur Demchenkov <spinal.by@gmail.com>
 Build-Depends:
  debhelper (>= 10),
- cdbs (>= 0.4),
  libgles2-dev [armel armhf] | libgles2-sgx-img-dev [armel armhf],
  libgl-dev [!armel !armhf],
  libgtk2.0-dev,

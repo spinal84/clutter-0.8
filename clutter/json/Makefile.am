@@ -17,7 +17,7 @@ noinst_LTLIBRARIES = libclutter-json.la
 
 libclutter_json_la_SOURCES = $(source_c) $(source_h)
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-DG_DISABLE_DEPRECATED \
 	$(GCC_FLAGS) \

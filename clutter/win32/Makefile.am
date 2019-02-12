@@ -7,7 +7,7 @@ clutter-win32-$(CLUTTER_API_VERSION).pc: clutter-win32.pc
 pkgconfig_DATA = clutter-win32-@CLUTTER_API_VERSION@.pc
 pkgconfigdir   = $(libdir)/pkgconfig
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-DG_LOG_DOMAIN=\"ClutterWin32\" \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/clutter \

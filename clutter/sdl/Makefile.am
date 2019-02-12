@@ -1,7 +1,7 @@
 libclutterincludedir = $(includedir)/clutter-@CLUTTER_API_VERSION@/clutter
 libclutterinclude_HEADERS = clutter-sdl.h
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-DG_LOG_DOMAIN=\"ClutterSDL\" \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/clutter/ \

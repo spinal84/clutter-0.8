@@ -1,8 +1,8 @@
-INCLUDES = \
+AM_CPPFLAGS = \
 	-DG_LOG_DOMAIN=\"ClutterX11\" \
 	-I$(top_srcdir) \
-	-I$(top_srcdir)/clutter 	        \
-	-I$(top_builddir)/clutter 	        \
+	-I$(top_srcdir)/clutter \
+	-I$(top_builddir)/clutter \
 	$(CLUTTER_CFLAGS) \
 	$(CLUTTER_DEBUG_CFLAGS) \
 	$(GCC_FLAGS)

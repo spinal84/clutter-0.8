@@ -23,7 +23,7 @@ noinst_PROGRAMS += test-pixmap
 noinst_PROGRAMS += test-devices
 endif
 
-INCLUDES = -I$(top_srcdir)/ -I$(top_srcdir)/clutter -I$(top_builddir)/clutter
+AM_CPPFLAGS = -I$(top_srcdir)/ -I$(top_srcdir)/clutter -I$(top_builddir)/clutter
 LDADD = $(top_builddir)/clutter/libclutter-@CLUTTER_FLAVOUR@-@CLUTTER_MAJORMINOR@.la
 AM_CFLAGS = $(CLUTTER_CFLAGS)
 AM_LDFLAGS = $(CLUTTER_LIBS)

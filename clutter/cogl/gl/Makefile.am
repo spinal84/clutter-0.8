@@ -2,7 +2,7 @@ libclutterincludedir = $(includedir)/clutter-@CLUTTER_API_VERSION@/cogl
 libclutterinclude_HEADERS = $(top_builddir)/clutter/cogl/cogl.h \
                             $(top_builddir)/clutter/cogl/cogl-defines-gl.h
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/clutter \
 	-I$(top_srcdir)/clutter/cogl \

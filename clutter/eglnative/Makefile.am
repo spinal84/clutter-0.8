@@ -1,7 +1,7 @@
 libclutterincludedir = $(includedir)/clutter-@CLUTTER_MAJORMINOR@/clutter
 libclutterinclude_HEADERS = clutter-egl.h
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-DG_LOG_DOMAIN=\"ClutterEGL\" \
 	-I$(top_srcdir) \
 	$(CLUTTER_CFLAGS) \

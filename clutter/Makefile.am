@@ -17,7 +17,7 @@ MARSHALFILES = clutter-marshal.c clutter-marshal.h
 ENUMFILES = clutter-enum-types.c clutter-enum-types.h
 STAMPFILES = stamp-clutter-marshal.h stamp-clutter-enum-types.h
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir) 				\
 	-I$(top_srcdir)/clutter/pango			\
 	-I$(top_srcdir)/clutter	                        \

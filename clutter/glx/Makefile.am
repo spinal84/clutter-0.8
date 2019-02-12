@@ -1,7 +1,7 @@
 libclutter_glx_includedir = $(includedir)/clutter-@CLUTTER_API_VERSION@/clutter/glx
 libclutter_glx_include_HEADERS = clutter-glx.h clutter-glx-texture-pixmap.h
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-DG_LOG_DOMAIN=\"ClutterGLX\" \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/clutter \

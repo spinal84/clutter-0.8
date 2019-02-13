@@ -175,7 +175,7 @@ clutter_model_real_get_column_type (ClutterModel *model,
 {
   ClutterModelPrivate *priv = model->priv;
 
-  if (column < 0 || column >= clutter_model_get_n_columns (model))
+  if (column >= clutter_model_get_n_columns (model))
     return G_TYPE_INVALID;
 
   return priv->column_types[column];
@@ -187,7 +187,7 @@ clutter_model_real_get_column_name (ClutterModel *model,
 {
   ClutterModelPrivate *priv = model->priv;
 
-  if (column < 0 || column >= clutter_model_get_n_columns (model))
+  if (column >= clutter_model_get_n_columns (model))
     return NULL;
 
   if (priv->column_names && priv->column_names[column])
@@ -1051,7 +1051,7 @@ clutter_model_get_column_name (ClutterModel *model,
 
   g_return_val_if_fail (CLUTTER_IS_MODEL (model), NULL);
 
-  if (column < 0 || column >= clutter_model_get_n_columns (model))
+  if (column >= clutter_model_get_n_columns (model))
     {
       g_warning ("%s: Invalid column id value %d\n", G_STRLOC, column);
       return NULL;
@@ -1083,7 +1083,7 @@ clutter_model_get_column_type (ClutterModel *model,
 
   g_return_val_if_fail (CLUTTER_IS_MODEL (model), G_TYPE_INVALID);
 
-  if (column < 0 || column >= clutter_model_get_n_columns (model))
+  if (column >= clutter_model_get_n_columns (model))
     {
       g_warning ("%s: Invalid column id value %d\n", G_STRLOC, column);
       return G_TYPE_INVALID;
@@ -1615,7 +1615,7 @@ clutter_model_iter_set_internal_valist (ClutterModelIter *iter,
       GValue value = { 0, };
       gchar *error = NULL;
 
-      if (column < 0 || column >= clutter_model_get_n_columns (model))
+      if (column >= clutter_model_get_n_columns (model))
         { 
           g_warning ("%s: Invalid column number %d added to iter "
                      "(remember to end you list of columns with a -1)",
@@ -1771,7 +1771,7 @@ clutter_model_iter_get_valist (ClutterModelIter *iter,
       GValue value = { 0, };
       gchar *error = NULL;
 
-      if (column < 0 || column >= clutter_model_get_n_columns (model))
+      if (column >= clutter_model_get_n_columns (model))
         { 
           g_warning ("%s: Invalid column number %d added to iter "
                      "(remember to end you list of columns with a -1)",

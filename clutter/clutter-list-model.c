@@ -123,7 +123,7 @@ clutter_list_model_iter_get_value (ClutterModelIter *iter,
                                    GValue           *value)
 {
   ClutterListModelIter *iter_default;
-  GValueArray *value_array;
+  GArray *array;
   GValue *iter_value;
   GValue real_value = { 0, };
   gboolean converted = FALSE;
@@ -131,8 +131,8 @@ clutter_list_model_iter_get_value (ClutterModelIter *iter,
   iter_default = CLUTTER_LIST_MODEL_ITER (iter);
   g_assert (iter_default->seq_iter != NULL);
 
-  value_array = g_sequence_get (iter_default->seq_iter);
-  iter_value = g_value_array_get_nth (value_array, column);
+  array = g_sequence_get (iter_default->seq_iter);
+  iter_value = &g_array_index (array, GValue, column);
   g_assert (iter_value != NULL);
 
   if (!g_type_is_a (G_VALUE_TYPE (value), G_VALUE_TYPE (iter_value)))
@@ -176,7 +176,7 @@ clutter_list_model_iter_set_value (ClutterModelIter *iter,
                                    const GValue     *value)
 {
   ClutterListModelIter *iter_default;
-  GValueArray *value_array;
+  GArray *array;
   GValue *iter_value;
   GValue real_value = { 0, };
   gboolean converted = FALSE;
@@ -184,8 +184,8 @@ clutter_list_model_iter_set_value (ClutterModelIter *iter,
   iter_default = CLUTTER_LIST_MODEL_ITER (iter);
   g_assert (iter_default->seq_iter != NULL);
 
-  value_array = g_sequence_get (iter_default->seq_iter);
-  iter_value = g_value_array_get_nth (value_array, column);
+  array = g_sequence_get (iter_default->seq_iter);
+  iter_value = &g_array_index (array, GValue, column);
   g_assert (iter_value != NULL);
 
   if (!g_type_is_a (G_VALUE_TYPE (value), G_VALUE_TYPE (iter_value)))
@@ -497,19 +497,21 @@ clutter_list_model_insert_row (ClutterModel *model,
   ClutterListModel *model_default = CLUTTER_LIST_MODEL (model);
   ClutterListModelIter *retval;
   guint n_columns, i, pos;
-  GValueArray *array;
+  GArray *array;
+  GValue empty_value = G_VALUE_INIT;
   GSequenceIter *seq_iter;
 
   n_columns = clutter_model_get_n_columns (model);
-  array = g_value_array_new (n_columns);
+  array = g_array_sized_new (FALSE, TRUE, sizeof (GValue), n_columns);
+  g_array_set_clear_func (array, (GDestroyNotify) g_value_unset);
 
   for (i = 0; i < n_columns; i++)
     {
-      GValue *value = NULL;
+      GValue *value;
 
-      g_value_array_append (array, NULL);
+      g_array_append_val (array, empty_value);
 
-      value = g_value_array_get_nth (array, i);
+      value = &g_array_index (array, GValue, i);
       g_value_init (value, clutter_model_get_column_type (model, i));
     }
 
@@ -603,13 +605,13 @@ sort_model_default (gconstpointer a,
                     gconstpointer b,
                     gpointer      data)
 {
-  GValueArray *row_a = (GValueArray *) a;
-  GValueArray *row_b = (GValueArray *) b;
+  GArray *row_a = (GArray *) a;
+  GArray *row_b = (GArray *) b;
   SortClosure *clos = data;
 
   return clos->func (clos->model,
-                     g_value_array_get_nth (row_a, clos->column),
-                     g_value_array_get_nth (row_b, clos->column),
+                     &g_array_index (row_a, GValue, clos->column),
+                     &g_array_index (row_b, GValue, clos->column),
                      clos->data);
 }
 
@@ -635,12 +637,12 @@ clutter_list_model_row_removed (ClutterModel     *model,
                                 ClutterModelIter *iter)
 {
   ClutterListModelIter *iter_default;
-  GValueArray *array;
+  GArray *array;
 
   iter_default = CLUTTER_LIST_MODEL_ITER (iter);
 
   array = g_sequence_get (iter_default->seq_iter);
-  g_value_array_free (array);
+  g_array_unref (array);
 
   g_sequence_remove (iter_default->seq_iter);
   iter_default->seq_iter = NULL;
@@ -655,9 +657,9 @@ clutter_list_model_finalize (GObject *gobject)
   iter = g_sequence_get_begin_iter (model->sequence);
   while (!g_sequence_iter_is_end (iter))
     {
-      GValueArray *value_array = g_sequence_get (iter);
+      GArray *array = g_sequence_get (iter);
 
-      g_value_array_free (value_array);
+      g_array_unref (array);
       iter = g_sequence_iter_next (iter);
     }
   g_sequence_free (model->sequence);

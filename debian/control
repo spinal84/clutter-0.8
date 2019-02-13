@@ -45,17 +45,3 @@ Description: Open GL based interactive canvas library (development files)
  presentations, kiosk style applications and so on.
  .
  This package contains the development files.
-
-#Package: libclutter-doc
-#Section: doc
-#Architecture: all
-#Depends: ${misc:Depends}
-#Suggests: devhelp
-#Conflicts: libclutter-0.1-doc
-#Replaces: libclutter-0.1-doc
-#Description: Open GL based interactive canvas library (documentation)
-# Clutter is an Open GL based interactive canvas library, designed for creating
-# fast, mainly 2D single window applications such as media box UIs,
-# presentations, kiosk style applications and so on.
-# .
-# This package contains the documentation.

@@ -115,7 +115,7 @@ void                  json_node_get_value       (JsonNode     *node,
                                                  GValue       *value);
 void                  json_node_set_string      (JsonNode     *node,
                                                  const gchar  *value);
-G_CONST_RETURN gchar *json_node_get_string      (JsonNode     *node);
+const gchar *         json_node_get_string      (JsonNode     *node);
 gchar *               json_node_dup_string      (JsonNode     *node);
 void                  json_node_set_int         (JsonNode     *node,
                                                  gint          value);
@@ -127,7 +127,7 @@ void                  json_node_set_boolean     (JsonNode     *node,
                                                  gboolean      value);
 gboolean              json_node_get_boolean     (JsonNode     *node);
 JsonNode *            json_node_get_parent      (JsonNode     *node);
-G_CONST_RETURN gchar *json_node_type_name       (JsonNode     *node);
+const gchar *         json_node_type_name       (JsonNode     *node);
 
 GType                 json_object_get_type      (void) G_GNUC_CONST;
 JsonObject *          json_object_new           (void);

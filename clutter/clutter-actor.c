@@ -5089,7 +5089,7 @@ clutter_actor_set_name (ClutterActor *self,
  * Return value: the name of the actor, or %NULL. The returned string is
  *   owned by the actor and should not be modified or freed.
  */
-G_CONST_RETURN gchar *
+const gchar *
 clutter_actor_get_name (ClutterActor *self)
 {
   g_return_val_if_fail (CLUTTER_IS_ACTOR (self), NULL);

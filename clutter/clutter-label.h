@@ -90,10 +90,10 @@ ClutterActor *        clutter_label_new_with_text      (const gchar        *font
                                                         const gchar        *text);
 void                  clutter_label_set_text           (ClutterLabel       *label,
 						        const gchar        *text);
-G_CONST_RETURN gchar *clutter_label_get_text           (ClutterLabel       *label);
+const gchar *         clutter_label_get_text           (ClutterLabel       *label);
 void                  clutter_label_set_font_name      (ClutterLabel       *label,
 						        const gchar        *font_name);
-G_CONST_RETURN gchar *clutter_label_get_font_name      (ClutterLabel       *label);
+const gchar *         clutter_label_get_font_name      (ClutterLabel       *label);
 void                  clutter_label_set_color          (ClutterLabel       *label,
 						        const ClutterColor *color);
 void                  clutter_label_get_color          (ClutterLabel       *label,

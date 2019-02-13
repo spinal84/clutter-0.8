@@ -114,10 +114,10 @@ ClutterActor *        clutter_entry_new_with_text       (const gchar        *fon
                                                          const gchar        *text);
 void                  clutter_entry_set_text            (ClutterEntry       *entry,
 						         const gchar        *text);
-G_CONST_RETURN gchar *clutter_entry_get_text            (ClutterEntry       *entry);
+const gchar *         clutter_entry_get_text            (ClutterEntry       *entry);
 void                  clutter_entry_set_font_name       (ClutterEntry       *entry,
 						         const gchar        *font_name);
-G_CONST_RETURN gchar *clutter_entry_get_font_name       (ClutterEntry       *entry);
+const gchar *         clutter_entry_get_font_name       (ClutterEntry       *entry);
 void                  clutter_entry_set_color           (ClutterEntry       *entry,
 						         const ClutterColor *color);
 void                  clutter_entry_get_color           (ClutterEntry       *entry,

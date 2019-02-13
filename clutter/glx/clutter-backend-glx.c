@@ -98,7 +98,7 @@ static int drm_wait_vblank(int fd, drm_wait_vblank_t *vbl)
 
 #endif 
 
-G_CONST_RETURN gchar*
+const gchar*
 clutter_backend_glx_get_vblank_method (void)
 {
   return clutter_vblank_name;

@@ -722,7 +722,7 @@ clutter_label_new (void)
  * Return value: the text of the label.  The returned string is
  * owned by #ClutterLabel and should not be modified or freed.
  */
-G_CONST_RETURN gchar *
+const gchar *
 clutter_label_get_text (ClutterLabel *label)
 {
   g_return_val_if_fail (CLUTTER_IS_LABEL (label), NULL);
@@ -773,7 +773,7 @@ clutter_label_set_text (ClutterLabel *label,
  *   string is owned by @label and should not be modified
  *   or freed.
  */
-G_CONST_RETURN gchar *
+const gchar *
 clutter_label_get_font_name (ClutterLabel *label)
 {
   g_return_val_if_fail (CLUTTER_IS_LABEL (label), NULL);

@@ -1011,7 +1011,7 @@ clutter_entry_new (void)
  *
  * Since: 0.4
  */
-G_CONST_RETURN gchar *
+const gchar *
 clutter_entry_get_text (ClutterEntry *entry)
 {
   g_return_val_if_fail (CLUTTER_IS_ENTRY (entry), NULL);
@@ -1102,7 +1102,7 @@ clutter_entry_set_text (ClutterEntry *entry,
  *
  * Since: 0.4
  */
-G_CONST_RETURN gchar *
+const gchar *
 clutter_entry_get_font_name (ClutterEntry *entry)
 {
   g_return_val_if_fail (CLUTTER_IS_ENTRY (entry), NULL);

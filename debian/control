@@ -12,7 +12,7 @@ Build-Depends:
  libxi-dev,
  libxdamage-dev,
  opengles-sgx-img-common-dev [armel armhf]
-Standards-Version: 3.7.2
+Standards-Version: 4.3.0
 
 Package: libclutter-0.8-0
 Section: libs
@@ -32,7 +32,7 @@ Section: libdevel
 Architecture: any
 Depends:
  ${misc:Depends},
- libclutter-0.8-0 (= ${Source-Version}),
+ libclutter-0.8-0 (= ${source:Version}),
  pkg-config,
  libgtk2.0-dev,
  libgles2-dev [armel armhf] | libgles2-sgx-img-dev [armel armhf],
@@ -45,18 +45,6 @@ Description: Open GL based interactive canvas library (development files)
  presentations, kiosk style applications and so on.
  .
  This package contains the development files.
-
-Package: libclutter-0.8-0-dbg
-Section: libdevel
-Priority: extra
-Architecture: any
-Depends: libclutter-0.8-0 (= ${Source-Version})
-Description: Open GL based interactive canvas library (debug files)
- Clutter is an Open GL based interactive canvas library, designed for creating
- fast, mainly 2D single window applications such as media box UIs,
- presentations, kiosk style applications and so on.
- .
- This package contains the debug files.
 
 #Package: libclutter-doc
 #Section: doc

@@ -1,5 +1,3 @@
-debian/tmp/usr/lib/*.so
-debian/tmp/usr/lib/pkgconfig/
-debian/tmp/usr/include/
-examples/*.c usr/share/doc/libclutter-0.8-dev/examples
-examples/*.png usr/share/doc/libclutter-0.8-dev/examples
+usr/lib/*/*.so
+usr/lib/*/pkgconfig/
+usr/include/

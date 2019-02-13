@@ -35,7 +35,7 @@ struct _ClutterFrameSource
 {
   GSource source;
 
-  GTimeVal start_time;
+  guint start_time;
   guint last_time, frame_time;
 };
 
@@ -96,8 +96,8 @@ clutter_frame_source_add_full (gint           priority,
   ClutterFrameSource *frame_source = (ClutterFrameSource *) source;
 
   frame_source->last_time = 0;
-  frame_source->frame_time = interval;
-  g_get_current_time (&frame_source->start_time);
+  frame_source->frame_time = interval * 1000;
+  frame_source->start_time = g_get_monotonic_time ();
 
   if (priority != G_PRIORITY_DEFAULT)
     g_source_set_priority (source, priority);
@@ -132,15 +132,14 @@ clutter_frame_source_add (guint          interval,
 					interval, func, data, NULL);
 }
 
-static guint
+static inline guint
 clutter_frame_source_get_ticks (ClutterFrameSource *frame_source)
 {
-  GTimeVal time_now;
+  guint time_now;
 
-  g_source_get_current_time ((GSource *) frame_source, &time_now);
+  time_now = g_source_get_time ((GSource *) frame_source);
   
-  return (time_now.tv_sec - frame_source->start_time.tv_sec) * 1000
-         + (time_now.tv_usec - frame_source->start_time.tv_usec) / 1000;
+  return time_now - frame_source->start_time;
 }
 
 static gboolean
@@ -170,7 +169,10 @@ clutter_frame_source_prepare (GSource *source, gint *timeout)
   else
     {
       if (timeout)
-	*timeout = frame_source->frame_time + frame_source->last_time - now;
+        {
+          *timeout =
+            (frame_source->frame_time + frame_source->last_time - now) / 1000;
+        }
       return FALSE;
     }
 }

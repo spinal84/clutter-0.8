@@ -63,7 +63,7 @@ struct _ClutterTimeoutPool
 
   guint next_id;
 
-  GTimeVal start_time;
+  guint start_time;
   GList *timeouts, *dispatched_timeouts;
   gint ready;
 
@@ -124,15 +124,14 @@ clutter_timeout_find_by_id (gconstpointer a,
   return t_a->id == GPOINTER_TO_UINT (b) ? 0 : 1;
 }
 
-static guint
+static inline guint
 clutter_timeout_pool_get_ticks (ClutterTimeoutPool *pool)
 {
-  GTimeVal time_now;
+  guint time_now;
 
-  g_source_get_current_time ((GSource *) pool, &time_now);
+  time_now = g_source_get_time ((GSource *) pool);
   
-  return (time_now.tv_sec - pool->start_time.tv_sec) * 1000
-    + (time_now.tv_usec - pool->start_time.tv_usec) / 1000;
+  return time_now - pool->start_time;
 }
 
 static gboolean
@@ -162,7 +161,7 @@ clutter_timeout_prepare (ClutterTimeoutPool *pool,
   else
     {
       if (next_timeout)
-	*next_timeout = timeout->interval + timeout->last_time - now;
+        *next_timeout = (timeout->interval + timeout->last_time - now) / 1000;
       return FALSE;
     }
 }
@@ -195,7 +194,7 @@ clutter_timeout_new (guint interval)
   ClutterTimeout *timeout;
 
   timeout = g_slice_new0 (ClutterTimeout);
-  timeout->interval = interval;
+  timeout->interval = interval * 1000;
   timeout->flags = CLUTTER_TIMEOUT_NONE;
   timeout->refcount = 1;
 
@@ -448,7 +447,7 @@ clutter_timeout_pool_new (gint priority)
 
   pool = (ClutterTimeoutPool *) source;
 
-  g_get_current_time (&pool->start_time);
+  pool->start_time = g_get_monotonic_time ();
   pool->next_id = 1;
   pool->id = g_source_attach (source, NULL);
 

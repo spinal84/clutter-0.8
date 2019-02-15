@@ -17,6 +17,7 @@ Standards-Version: 4.3.0
 Package: libclutter-0.8-0
 Section: libs
 Architecture: any
+Multi-arch: same
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
@@ -30,6 +31,7 @@ Description: Open GL based interactive canvas library
 Package: libclutter-0.8-dev
 Section: libdevel
 Architecture: any
+Multi-arch: same
 Depends:
  ${misc:Depends},
  libclutter-0.8-0 (= ${source:Version}),

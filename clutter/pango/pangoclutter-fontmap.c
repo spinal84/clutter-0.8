@@ -55,7 +55,7 @@ pango_clutter_font_map_create_context (PangoClutterFontMap *fm)
 
   /* We can just directly use the pango context from the Cairo font
      map */
-  return pango_cairo_font_map_create_context (PANGO_CAIRO_FONT_MAP (fm));
+  return pango_font_map_create_context (PANGO_FONT_MAP (fm));
 }
 
 PangoRenderer *

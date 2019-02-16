@@ -100,7 +100,7 @@ json_object_ref (JsonObject *object)
   g_return_val_if_fail (object != NULL, NULL);
   g_return_val_if_fail (object->ref_count > 0, NULL);
 
-  g_atomic_int_exchange_and_add (&object->ref_count, 1);
+  g_atomic_int_inc (&object->ref_count);
 
   return object;
 }

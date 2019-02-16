@@ -682,9 +682,6 @@ clutter_threads_impl_unlock (void)
 void
 clutter_threads_init (void)
 {
-  if (!g_thread_supported ())
-    g_error ("g_thread_init() must be called before clutter_threads_init()");
-
   if (!clutter_threads_lock)
     clutter_threads_lock = clutter_threads_impl_lock;
 
@@ -2275,9 +2272,6 @@ clutter_base_init (void)
       GType foo; /* Quiet gcc */
 
       initialised = TRUE;
-
-      /* initialise GLib type system */
-      g_type_init ();
 
       /* CLUTTER_TYPE_ACTOR */
       foo = clutter_actor_get_type ();

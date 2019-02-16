@@ -116,7 +116,7 @@ json_array_ref (JsonArray *array)
   g_return_val_if_fail (array != NULL, NULL);
   g_return_val_if_fail (array->ref_count > 0, NULL);
 
-  g_atomic_int_exchange_and_add (&array->ref_count, 1);
+  g_atomic_int_inc (&array->ref_count);
 
   return array;
 }

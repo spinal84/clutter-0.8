@@ -366,7 +366,6 @@ clutter_backend_glx_ensure_context (ClutterBackend *backend,
   else
     {
       ClutterBackendGLX  *backend_glx;
-      ClutterStageGLX    *stage_glx;
       ClutterStageX11    *stage_x11;
       ClutterStageWindow *impl;
 
@@ -377,7 +376,6 @@ clutter_backend_glx_ensure_context (ClutterBackend *backend,
                     g_type_name (G_OBJECT_TYPE (impl)),
                     impl);
 
-      stage_glx = CLUTTER_STAGE_GLX (impl);
       stage_x11 = CLUTTER_STAGE_X11 (impl);
       backend_glx = CLUTTER_BACKEND_GLX (backend);
 
@@ -425,7 +423,6 @@ static void
 clutter_backend_glx_redraw (ClutterBackend *backend,
                             ClutterStage   *stage)
 {
-  ClutterStageGLX *stage_glx;
   ClutterStageX11 *stage_x11;
   ClutterStageWindow *impl;
 
@@ -436,7 +433,6 @@ clutter_backend_glx_redraw (ClutterBackend *backend,
   g_assert (CLUTTER_IS_STAGE_GLX (impl));
 
   stage_x11 = CLUTTER_STAGE_X11 (impl);
-  stage_glx = CLUTTER_STAGE_GLX (impl);
 
   /* this will cause the stage implementation to be painted */
   clutter_actor_paint (CLUTTER_ACTOR (stage));

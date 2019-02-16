@@ -202,6 +202,7 @@ clutter_backend_egl_constructor (GType                  gtype,
 static ClutterFeatureFlags
 clutter_backend_egl_get_features (ClutterBackend *backend)
 {
+#ifdef CLUTTER_ENABLE_DEBUG
   ClutterBackendEGL  *backend_egl = CLUTTER_BACKEND_EGL (backend);
 
   CLUTTER_NOTE (BACKEND, "Checking features\n"
@@ -219,6 +220,7 @@ clutter_backend_egl_get_features (ClutterBackend *backend)
                 eglQueryString (backend_egl->edpy, EGL_VENDOR),
                 eglQueryString (backend_egl->edpy, EGL_VERSION),
                 eglQueryString (backend_egl->edpy, EGL_EXTENSIONS));
+#endif
 
   /* We can actually resize too */
   return CLUTTER_FEATURE_STAGE_CURSOR|CLUTTER_FEATURE_STAGE_MULTIPLE;

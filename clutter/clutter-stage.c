@@ -267,7 +267,9 @@ static void
 clutter_stage_paint (ClutterActor *self)
 {
   ClutterStagePrivate *priv = CLUTTER_STAGE (self)->priv;
+#if DOUBLE_BUFFER
   ClutterGeometry      last_damage;
+#endif
   gboolean             update_area;
   guint                width, height;
 
@@ -275,13 +277,16 @@ clutter_stage_paint (ClutterActor *self)
 
   CLUTTER_NOTE (PAINT, "Initializing stage paint");
 
+#if DOUBLE_BUFFER
   last_damage = priv->last_damaged_area;
   priv->last_damaged_area = priv->damaged_area;
-#if DOUBLE_BUFFER
   /* Add the damaged area from last frame to this one, as we're double-buffered
    * so will have missed 2 frames worth of changes! */
   clutter_stage_set_damaged_area(self, last_damage);
+#else
+  priv->last_damaged_area = priv->damaged_area;
 #endif
+
   /* If we only had a small area, redraw that */
   update_area = priv->damaged_area.width>0 && priv->damaged_area.height>0;
   /* Or if it was the whole screen, just skip the small redraw overhead */
@@ -1298,7 +1303,7 @@ clutter_stage_read_pixels (ClutterStage *stage,
   guchar *temprow;
   GLint   viewport[4];
   gint    rowstride;
-  gint    stage_x, stage_y, stage_width, stage_height;
+  gint    stage_width, stage_height;
 
   g_return_val_if_fail (CLUTTER_IS_STAGE (stage), NULL);
 
@@ -1312,8 +1317,6 @@ clutter_stage_read_pixels (ClutterStage *stage,
   clutter_stage_ensure_current (stage);
 
   glGetIntegerv (GL_VIEWPORT, viewport);
-  stage_x      = viewport[0];
-  stage_y      = viewport[1];
   stage_width  = viewport[2];
   stage_height = viewport[3];
 

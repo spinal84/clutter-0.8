@@ -1213,13 +1213,10 @@ clutter_texture_set_from_rgb_data   (ClutterTexture     *texture,
                                      ClutterTextureFlags flags,
                                      GError            **error)
 {
-  ClutterTexturePrivate *priv;
   CoglPixelFormat        source_format;
   CoglPixelFormat        internal_format;
 
   g_return_val_if_fail (CLUTTER_IS_TEXTURE (texture), FALSE);
-
-  priv = texture->priv;
 
   /* Convert the flags to a CoglPixelFormat */
   if (has_alpha)
@@ -1309,7 +1306,6 @@ clutter_texture_set_from_yuv_data   (ClutterTexture     *texture,
 				     ClutterTextureFlags flags,
 				     GError            **error)
 {
-  ClutterTexturePrivate *priv;
   CoglPixelFormat        internal_format;
 
   g_return_val_if_fail (CLUTTER_IS_TEXTURE (texture), FALSE);
@@ -1321,8 +1317,6 @@ clutter_texture_set_from_yuv_data   (ClutterTexture     *texture,
                    "YUV textures are not supported");
       return FALSE;
     }
-
-  priv = texture->priv;
 
   /* Convert the flags to a CoglPixelFormat */
   if ((flags & CLUTTER_TEXTURE_YUV_FLAG_YUV2))

@@ -1389,14 +1389,11 @@ post_parse_hook (GOptionContext  *context,
                  GError         **error)
 {
   ClutterMainContext *clutter_context;
-  ClutterBackend *backend;
 
   if (clutter_is_initialized)
     return TRUE;
 
   clutter_context = clutter_context_get_default ();
-  backend = clutter_context->backend;
-  g_assert (CLUTTER_IS_BACKEND (backend));
 
   if (clutter_fatal_warnings)
     {
@@ -1458,8 +1455,6 @@ clutter_get_option_group (void)
   ClutterMainContext *context;
   GOptionGroup *group;
 
-  clutter_base_init ();
-
   context = clutter_context_get_default ();
 
   group = g_option_group_new ("clutter",
@@ -1499,8 +1494,6 @@ clutter_get_option_group_without_init (void)
 {
   ClutterMainContext *context;
   GOptionGroup *group;
-
-  clutter_base_init ();
 
   context = clutter_context_get_default ();
   context->defer_display_setup = TRUE;
@@ -1553,8 +1546,6 @@ clutter_init_with_args (int            *argc,
 
   if (clutter_is_initialized)
     return CLUTTER_INIT_SUCCESS;
-
-  clutter_base_init ();
 
   ctx = clutter_context_get_default ();
 
@@ -1652,8 +1643,6 @@ clutter_init (int    *argc,
 
   if (clutter_is_initialized)
     return CLUTTER_INIT_SUCCESS;
-
-  clutter_base_init ();
 
   ctx = clutter_context_get_default ();
 
@@ -1983,17 +1972,14 @@ clutter_do_event (ClutterEvent *event)
 {
   /* FIXME: This should probably be clutter_cook_event() - it would
    * take a raw event from the backend and 'cook' it so its more tasty.
-   *
   */
   ClutterMainContext  *context;
-  ClutterBackend      *backend;
   ClutterActor        *stage;
   ClutterInputDevice  *device = NULL;
   static gint32        motion_last_time = 0L;
   gint32               local_motion_time;
 
   context = clutter_context_get_default ();
-  backend = context->backend;
   stage   = CLUTTER_ACTOR(event->any.stage);
 
   if (!stage)
@@ -2260,22 +2246,6 @@ clutter_get_actor_by_gid (guint32 id)
   g_return_val_if_fail (context != NULL, NULL);
 
   return CLUTTER_ACTOR (clutter_id_pool_lookup (context->id_pool, id));
-}
-
-void
-clutter_base_init (void)
-{
-  static gboolean initialised = FALSE;
-
-  if (!initialised)
-    {
-      GType foo; /* Quiet gcc */
-
-      initialised = TRUE;
-
-      /* CLUTTER_TYPE_ACTOR */
-      foo = clutter_actor_get_type ();
-    }
 }
 
 /**

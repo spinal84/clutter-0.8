@@ -121,12 +121,9 @@ texture_bind (ClutterGLXTexturePixmap *tex)
 static void
 clutter_glx_texture_pixmap_init (ClutterGLXTexturePixmap *self)
 {
-  ClutterGLXTexturePixmapPrivate *priv;
-
-  priv = self->priv =
-      G_TYPE_INSTANCE_GET_PRIVATE (self,
-                                   CLUTTER_GLX_TYPE_TEXTURE_PIXMAP,
-                                   ClutterGLXTexturePixmapPrivate);
+  self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
+                                            CLUTTER_GLX_TYPE_TEXTURE_PIXMAP,
+                                            ClutterGLXTexturePixmapPrivate);
 
   if (_ext_check_done == FALSE)
     {
@@ -297,7 +294,7 @@ get_fbconfig_for_depth (guint depth)
   GLXFBConfig *fbconfigs, *ret = NULL;
   int          n_elements, i, found;
   Display     *dpy;
-  int          db, stencil, alpha, mipmap, rgba, value;
+  int          db, stencil, alpha, rgba, value;
 
   dpy = clutter_x11_get_default_display ();
 
@@ -307,7 +304,6 @@ get_fbconfig_for_depth (guint depth)
 
   db      = G_MAXSHORT;
   stencil = G_MAXSHORT;
-  mipmap  = 0;
   rgba    = 0;
 
   found = n_elements;
@@ -446,12 +442,9 @@ clutter_glx_texture_pixmap_create_glx_pixmap (ClutterGLXTexturePixmap *texture)
   guint                           depth;
   Pixmap                          pixmap;
   guint				  pixmap_width, pixmap_height;
-  ClutterBackendGLX              *backend_glx;
   ClutterTextureQuality           quality;
 
   CLUTTER_NOTE (TEXTURE, "Creating GLXPixmap");
-
-  backend_glx = CLUTTER_BACKEND_GLX(clutter_get_default_backend ());
 
   dpy = clutter_x11_get_default_display ();
 
@@ -649,10 +642,6 @@ clutter_glx_texture_pixmap_class_init (ClutterGLXTexturePixmapClass *klass)
 gboolean
 clutter_glx_texture_pixmap_using_extension (ClutterGLXTexturePixmap *texture)
 {
-  ClutterGLXTexturePixmapPrivate       *priv;
-
-  priv = CLUTTER_GLX_TEXTURE_PIXMAP (texture)->priv;
-
   return (_have_tex_from_pixmap_ext);
   /* Assume NPOT TFP's are supported even if regular NPOT isn't advertised
    * but tfp is. Seemingly some Intel drivers do this ?

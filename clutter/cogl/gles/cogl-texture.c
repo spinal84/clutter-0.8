@@ -695,7 +695,6 @@ _cogl_texture_size_supported (GLenum gl_target,
 static gboolean
 _cogl_texture_slices_create (CoglTexture *tex)
 {
-  gint              bpp;
   gint              max_width;
   gint              max_height;
   GLuint           *gl_handles;
@@ -708,8 +707,6 @@ _cogl_texture_slices_create (CoglTexture *tex)
   gboolean          force_no_slice = FALSE;
 
   gint   (*slices_for_size) (gint, gint, gint, GArray*);
-
-  bpp = _cogl_get_format_bpp (tex->bitmap.format);
 
   /* Initialize size of largest slice according to supported features */
   max_width = cogl_util_next_p2 (tex->bitmap.width);
@@ -1255,7 +1252,6 @@ cogl_texture_new_from_foreign (GLuint           gl_handle,
 			       GLuint           y_pot_waste,
 			       CoglPixelFormat  format)
 {
-  GLenum           gl_error = 0;
   GLboolean        gl_istexture;
   GLint            gl_min_filter;
   GLint            gl_mag_filter;
@@ -1275,7 +1271,7 @@ cogl_texture_new_from_foreign (GLuint           gl_handle,
     return COGL_INVALID_HANDLE;
 
   /* Make sure binding succeeds */
-  gl_error = glGetError ();
+  glGetError ();
   glBindTexture (gl_target, gl_handle);
   if (glGetError () != GL_NO_ERROR)
     return COGL_INVALID_HANDLE;

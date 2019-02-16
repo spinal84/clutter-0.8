@@ -112,7 +112,6 @@ clutter_stage_glx_realize (ClutterActor *actor)
   ClutterStageX11   *stage_x11 = CLUTTER_STAGE_X11 (actor);
   ClutterStageGLX   *stage_glx = CLUTTER_STAGE_GLX (actor);
   ClutterBackendGLX *backend_glx;
-  ClutterBackendX11 *backend_x11;
   gboolean           is_offscreen;
 
   CLUTTER_NOTE (MISC, "Realizing main stage");
@@ -120,7 +119,6 @@ clutter_stage_glx_realize (ClutterActor *actor)
   g_object_get (stage_x11->wrapper, "offscreen", &is_offscreen, NULL);
 
   backend_glx = CLUTTER_BACKEND_GLX (clutter_get_default_backend ());
-  backend_x11 = CLUTTER_BACKEND_X11 (clutter_get_default_backend ());
 
   if (G_LIKELY (!is_offscreen))
     {

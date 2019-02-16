@@ -135,10 +135,7 @@ static gboolean
 check_extensions (ClutterX11TexturePixmap *texture)
 {
   int                             damage_error;
-  ClutterX11TexturePixmapPrivate *priv;
   Display                        *dpy;
-
-  priv = texture->priv;
 
   if (_damage_event_base)
     return TRUE;

@@ -1154,8 +1154,6 @@ cogl_gles2_float_array_to_fixed (int size, const GLfloat *floats,
 void
 cogl_wrap_glGetIntegerv (GLenum pname, GLint *params)
 {
-  _COGL_GET_GLES2_WRAPPER (w, NO_RETVAL);
-
   switch (pname)
     {
     case GL_MAX_CLIP_PLANES:

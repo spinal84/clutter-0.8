@@ -588,10 +588,6 @@ clutter_eglx_texture_pixmap_class_init (ClutterEGLXTexturePixmapClass *klass)
 gboolean
 clutter_eglx_texture_pixmap_using_extension (ClutterEGLXTexturePixmap *texture)
 {
-  ClutterEGLXTexturePixmapPrivate       *priv;
-
-  priv = CLUTTER_EGLX_TEXTURE_PIXMAP (texture)->priv;
-
   return _have_tex_from_pixmap_ext;
   /* Assume NPOT TFP's are supported even if regular NPOT isn't advertised
    * but tfp is. Seemingly some Intel drivers do this ?

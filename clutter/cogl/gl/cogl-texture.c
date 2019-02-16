@@ -566,7 +566,6 @@ if (gl_target ==  GL_TEXTURE_2D)
 static gboolean
 _cogl_texture_slices_create (CoglTexture *tex)
 {
-  gint              bpp;
   gint              max_width;
   gint              max_height;
   GLuint           *gl_handles;
@@ -579,8 +578,6 @@ _cogl_texture_slices_create (CoglTexture *tex)
   const GLfloat     transparent_color[4] = { 0x00, 0x00, 0x00, 0x00 };
 
   gint   (*slices_for_size) (gint, gint, gint, GArray*);
-
-  bpp = _cogl_get_format_bpp (tex->bitmap.format);
 
   /* Initialize size of largest slice according to supported features*/
   if (cogl_features_available (COGL_FEATURE_TEXTURE_NPOT))
@@ -1234,7 +1231,6 @@ cogl_texture_new_from_foreign (GLuint           gl_handle,
      unsupported in favor of a new version and cleaner api
   */
 
-  GLenum           gl_error = 0;
   GLboolean        gl_istexture;
   GLint            gl_compressed = GL_FALSE;
   GLint            gl_int_format = 0;
@@ -1258,7 +1254,7 @@ cogl_texture_new_from_foreign (GLuint           gl_handle,
     return COGL_INVALID_HANDLE;
 
   /* Make sure binding succeeds */
-  gl_error = glGetError ();
+  glGetError ();
   glBindTexture (gl_target, gl_handle);
   if (glGetError () != GL_NO_ERROR)
     return COGL_INVALID_HANDLE;

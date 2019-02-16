@@ -155,10 +155,8 @@ clutter_entry_set_property (GObject      *object,
 			    GParamSpec   *pspec)
 {
   ClutterEntry        *entry;
-  ClutterEntryPrivate *priv;
 
   entry = CLUTTER_ENTRY (object);
-  priv = entry->priv;
 
   switch (prop_id)
     {

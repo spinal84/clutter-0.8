@@ -390,9 +390,6 @@ static void
 clutter_label_dispose (GObject *object)
 {
   ClutterLabel         *self = CLUTTER_LABEL(object);
-  ClutterLabelPrivate  *priv;
-
-  priv = self->priv;
 
   /* Get rid of the cached layouts */
   clutter_label_dirty_cache (self);
@@ -424,10 +421,8 @@ clutter_label_set_property (GObject      *object,
 			    GParamSpec   *pspec)
 {
   ClutterLabel        *label;
-  ClutterLabelPrivate *priv;
 
   label = CLUTTER_LABEL(object);
-  priv = label->priv;
 
   switch (prop_id)
     {

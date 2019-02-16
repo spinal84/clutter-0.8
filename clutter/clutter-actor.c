@@ -3007,15 +3007,11 @@ clutter_actor_init (ClutterActor *self)
 void
 clutter_actor_destroy (ClutterActor *self)
 {
-  ClutterActorPrivate *priv;
-
   if (!CLUTTER_IS_ACTOR (self))
     {
       g_critical("%s: CLUTTER_IS_ACTOR(%p) FAILED", __FUNCTION__, self);
       return;
     }
-
-  priv = self->priv;
 
   g_object_ref (self);
 
@@ -3157,7 +3153,6 @@ clutter_actor_get_preferred_size (ClutterActor *self,
                                   ClutterUnit  *natural_height_p)
 {
   ClutterActorPrivate *priv;
-  ClutterUnit for_width, for_height;
   ClutterUnit min_width, min_height;
   ClutterUnit natural_width, natural_height;
 
@@ -3165,7 +3160,6 @@ clutter_actor_get_preferred_size (ClutterActor *self,
 
   priv = self->priv;
 
-  for_width = for_height = 0;
   min_width = min_height = 0;
   natural_width = natural_height = 0;
 
@@ -6408,12 +6402,9 @@ void
 clutter_actor_set_anchor_point_from_gravity (ClutterActor   *self,
 					     ClutterGravity  gravity)
 {
-  ClutterActorPrivate *priv;
   ClutterUnit w, h, x, y;
 
   g_return_if_fail (CLUTTER_IS_ACTOR (self));
-
-  priv = self->priv;
 
   x = 0;
   y = 0;

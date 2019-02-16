@@ -956,8 +956,8 @@ json_parser_load_from_data (JsonParser   *parser,
                         msg = g_strconcat ("e.g. `", symbol_name, "'", NULL);
                     }
 
-                  if (scanner->token > JSON_TOKEN_INVALID &&
-                      scanner->token < JSON_TOKEN_LAST)
+                  if ((JsonTokenType) scanner->token > JSON_TOKEN_INVALID &&
+                      (JsonTokenType) scanner->token < JSON_TOKEN_LAST)
                     {
                       symbol_name = "???";
 

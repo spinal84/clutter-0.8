@@ -31,6 +31,8 @@
 #include "cogl-clip-stack.h"
 #include "cogl-util.h"
 #include "cogl-internal.h"
+
+#include <stdlib.h>
 #include <math.h>
 
 /* These are defined in the particular backend (float in GL vs fixed

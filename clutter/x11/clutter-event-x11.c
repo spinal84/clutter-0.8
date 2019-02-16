@@ -42,6 +42,7 @@
 #endif
 
 #include <X11/Xatom.h>
+#include <X11/XKBlib.h>
 
 /* XEMBED protocol support for toolkit embedding */
 #define XEMBED_MAPPED                   (1 << 0)
@@ -257,9 +258,7 @@ translate_key_event (ClutterBackend   *backend,
 
   /* keyval is the key ignoring all modifiers ('1' vs. '!') */
   event->key.keyval =
-    XKeycodeToKeysym (xevent->xkey.display,
-                      xevent->xkey.keycode,
-                      0);
+    XkbKeycodeToKeysym (xevent->xkey.display, xevent->xkey.keycode, 0, 0);
 
   /* unicode_value is the printable representation */
   n = XLookupString (&xevent->xkey, buffer, sizeof (buffer) - 1, NULL, NULL);

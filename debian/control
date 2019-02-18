@@ -4,13 +4,13 @@ Priority: optional
 Maintainer: Arthur Demchenkov <spinal.by@gmail.com>
 Build-Depends:
  debhelper (>= 10),
- libgles2-dev [armel armhf] | libgles2-sgx-img-dev [armel armhf],
- libgl-dev [!armel !armhf],
- libgtk2.0-dev,
  libxcomposite-dev,
- libxi-dev,
  libxdamage-dev,
- opengles-sgx-img-common-dev [armel armhf]
+ libxi-dev,
+ libgdk-pixbuf2.0-dev,
+ libpango1.0-dev,
+ libgl1-mesa-dev,
+ libgles2-mesa-dev,
 Standards-Version: 4.3.0
 
 Package: libclutter-0.8-0
@@ -20,8 +20,8 @@ Multi-arch: same
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
- libgles2-sgx-img [armel armhf] | libgles2 [armel armhf],
- libgl1 [!armel !armhf]
+ libgl1-mesa-glx [!armel !armhf],
+ libgles2-mesa [armel armhf],
 Description: Open GL based interactive canvas library
  Clutter is an Open GL based interactive canvas library, designed for creating
  fast, mainly 2D single window applications such as media box UIs,
@@ -35,11 +35,13 @@ Depends:
  ${misc:Depends},
  libclutter-0.8-0 (= ${source:Version}),
  pkg-config,
- libgtk2.0-dev,
- libgles2-dev [armel armhf] | libgles2-sgx-img-dev [armel armhf],
- opengles-sgx-img-common-dev [armel armhf],
- libgl-dev [!armel !armhf]
-Suggests: libclutter-doc
+ libxcomposite-dev,
+ libxdamage-dev,
+ libxi-dev,
+ libgdk-pixbuf2.0-dev,
+ libpango1.0-dev,
+ libgl1-mesa-dev,
+ libgles2-mesa-dev,
 Description: Open GL based interactive canvas library (development files)
  Clutter is an Open GL based interactive canvas library, designed for creating
  fast, mainly 2D single window applications such as media box UIs,

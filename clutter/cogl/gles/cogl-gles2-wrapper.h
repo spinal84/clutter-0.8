@@ -30,6 +30,8 @@ G_BEGIN_DECLS
 
 #ifdef HAVE_COGL_GLES2
 
+typedef int GLclampx;
+
 typedef struct _CoglGles2Wrapper         CoglGles2Wrapper;
 typedef struct _CoglGles2WrapperUniforms CoglGles2WrapperUniforms;
 typedef struct _CoglGles2WrapperSettings CoglGles2WrapperSettings;

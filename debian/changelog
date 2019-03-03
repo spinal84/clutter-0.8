@@ -1,3 +1,9 @@
+clutter (0.8.2-0maemo68) unstable; urgency=medium
+
+  * Port to Debian Stretch
+
+ -- Arthur Demchenkov <spinal.by@gmail.com>  Sun, 03 Mar 2019 15:22:07 +0300
+
 clutter (0.8.2-0maemo67+0m5) unstable; urgency=low
 
   * clutter/cogl/common/cogl-clip-stack.c: Apply clipping scissors when

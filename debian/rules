@@ -8,7 +8,10 @@ else
 CONFFLAGS += --with-flavour=glx
 endif
 
-CFLAGS := -DG_DEBUG_DISABLE -Winline
+DEB_CPPFLAGS_MAINT_APPEND += -DG_DEBUG_DISABLE
+DEB_CFLAGS_MAINT_APPEND   += -Winline
+
+export DEB_CPPFLAGS_MAINT_APPEND DEB_CFLAGS_MAINT_APPEND
 
 override_dh_auto_configure:
 	dh_auto_configure -- \

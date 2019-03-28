@@ -81,23 +81,10 @@
  * it is much easier for floating point inaccuracy to creep in with glViewport
  *  */
 
-/* For some reason glViewport doesn't work in scratchbox. The strange error is
- * that after the first viewport update, clutter never gets called to paint
- * again until a fullscreen update is made. */
-
-/* If we're using double-buffering we want to update the area for this frame
- * AND the area for the last frame. */
-#if CLUTTER_COGL_HAS_GLES
+/* If we're using triple-buffering we want to update the area for this frame
+ * AND the areas for the last two frames. */
 #define VIEWPORT_DAMAGE 0
-#define DOUBLE_BUFFER 0
-/* We *should* be double-buffered, but because we're just blitting in
- * glSwapBuffers rather than flipping, we can do without the extra areas
- * drawn. THIS MUST BE SET TO 1 IF FLIPPING IS EVER IMPLEMENTED
- */
-#else
-#define VIEWPORT_DAMAGE 0
-#define DOUBLE_BUFFER 1
-#endif
+#define TRIPLE_BUFFER 1
 /* ----------------------------------------------------------------------*/
 /* ----------------------------------------------------------------------*/
 /* ----------------------------------------------------------------------*/
@@ -123,9 +110,9 @@ struct _ClutterStagePrivate
 
   /* if this is invalid, everything will be repainted */
   ClutterGeometry     damaged_area;
-  /* The damaged area on the last frame. We are double-buffered,
-   * so we must update both */
-  ClutterGeometry     last_damaged_area;
+  /* The damaged areas on the last two frames */
+  ClutterGeometry     last_damaged_area1;
+  ClutterGeometry     last_damaged_area2;
 
   int                 shaped_mode;
 
@@ -267,7 +254,7 @@ static void
 clutter_stage_paint (ClutterActor *self)
 {
   ClutterStagePrivate *priv = CLUTTER_STAGE (self)->priv;
-#if DOUBLE_BUFFER
+#if TRIPLE_BUFFER
   ClutterGeometry      last_damage;
 #endif
   gboolean             update_area;
@@ -277,14 +264,16 @@ clutter_stage_paint (ClutterActor *self)
 
   CLUTTER_NOTE (PAINT, "Initializing stage paint");
 
-#if DOUBLE_BUFFER
-  last_damage = priv->last_damaged_area;
-  priv->last_damaged_area = priv->damaged_area;
-  /* Add the damaged area from last frame to this one, as we're double-buffered
-   * so will have missed 2 frames worth of changes! */
+#if TRIPLE_BUFFER
+  last_damage = priv->last_damaged_area2;
+  priv->last_damaged_area2 = priv->last_damaged_area1;
+  priv->last_damaged_area1 = priv->damaged_area;
+  /* Add the damaged areas from last 2 frames to this one, as we're triple-buffered */
   clutter_stage_set_damaged_area(self, last_damage);
+  clutter_stage_set_damaged_area(self, priv->last_damaged_area2);
 #else
-  priv->last_damaged_area = priv->damaged_area;
+  priv->last_damaged_area2 = priv->last_damaged_area1;
+  priv->last_damaged_area1 = priv->damaged_area;
 #endif
 
   /* If we only had a small area, redraw that */
@@ -878,7 +867,8 @@ clutter_stage_init (ClutterStage *self)
   priv->damaged_area.y = 0;
   priv->damaged_area.width = 0;
   priv->damaged_area.height = 0;
-  priv->last_damaged_area = priv->damaged_area;
+  priv->last_damaged_area1 = priv->damaged_area;
+  priv->last_damaged_area2 = priv->damaged_area;
 
   clutter_actor_set_reactive (CLUTTER_ACTOR (self), TRUE);
   clutter_stage_set_key_focus (self, NULL);

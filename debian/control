@@ -1,5 +1,5 @@
 Source: clutter
-Section: libs
+Section: n900
 Priority: optional
 Maintainer: Arthur Demchenkov <spinal.by@gmail.com>
 Build-Depends:
@@ -14,7 +14,7 @@ Build-Depends:
 Standards-Version: 4.3.0
 
 Package: libclutter-0.8-0
-Section: libs
+Section: n900
 Architecture: any
 Multi-arch: same
 Depends:
@@ -28,7 +28,7 @@ Description: Open GL based interactive canvas library
  presentations, kiosk style applications and so on.
 
 Package: libclutter-0.8-dev
-Section: libdevel
+Section: n900
 Architecture: any
 Multi-arch: same
 Depends:

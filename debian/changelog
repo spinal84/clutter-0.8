@@ -1,3 +1,9 @@
+clutter (0.8.2.69) unstable; urgency=medium
+
+  * Release for Maemo Leste
+
+ -- Arthur Demchenkov <spinal.by@gmail.com>  Fri, 07 Feb 2020 06:55:37 +0300
+
 clutter (0.8.2-0maemo68) unstable; urgency=medium
 
   * Port to Debian Stretch

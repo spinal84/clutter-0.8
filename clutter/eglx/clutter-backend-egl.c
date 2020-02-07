@@ -196,7 +196,7 @@ clutter_backend_egl_constructor (GType                  gtype,
   g_warning ("Attempting to create a new backend object. This should "
              "never happen, so we return the singleton instance.");
 
-  return g_object_ref (backend_singleton);
+  return G_OBJECT (g_object_ref (backend_singleton));
 }
 
 static ClutterFeatureFlags

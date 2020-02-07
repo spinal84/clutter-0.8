@@ -67,14 +67,6 @@
 
 static void clutter_scriptable_iface_init (ClutterScriptableIface *iface);
 
-G_DEFINE_TYPE_WITH_CODE (ClutterTexture,
-                         clutter_texture,
-                         CLUTTER_TYPE_ACTOR,
-                         G_IMPLEMENT_INTERFACE (CLUTTER_TYPE_SCRIPTABLE,
-                                                clutter_scriptable_iface_init));
-
-#define CLUTTER_TEXTURE_GET_PRIVATE(obj)        (G_TYPE_INSTANCE_GET_PRIVATE ((obj), CLUTTER_TYPE_TEXTURE, ClutterTexturePrivate))
-
 struct _ClutterTexturePrivate
 {
   gint                         width;
@@ -99,6 +91,16 @@ struct _ClutterTexturePrivate
   guint                        in_dispose : 1;
   guint                        keep_aspect_ratio : 1;
 };
+
+G_DEFINE_TYPE_WITH_CODE (ClutterTexture,
+                         clutter_texture,
+                         CLUTTER_TYPE_ACTOR,
+                         G_ADD_PRIVATE (ClutterTexture)
+                         G_IMPLEMENT_INTERFACE (CLUTTER_TYPE_SCRIPTABLE,
+                                                clutter_scriptable_iface_init));
+
+#define CLUTTER_TEXTURE_GET_PRIVATE(obj) \
+  (clutter_texture_get_instance_private (obj))
 
 enum
 {
@@ -758,8 +760,6 @@ clutter_texture_class_init (ClutterTextureClass *klass)
 
   gobject_class = (GObjectClass*) klass;
   actor_class = (ClutterActorClass*) klass;
-
-  g_type_class_add_private (klass, sizeof (ClutterTexturePrivate));
 
   actor_class->paint          = clutter_texture_paint;
   actor_class->realize        = clutter_texture_realize;

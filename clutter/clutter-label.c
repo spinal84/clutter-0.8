@@ -45,8 +45,6 @@
 
 #define DEFAULT_FONT_NAME	"Sans 10"
 
-G_DEFINE_TYPE (ClutterLabel, clutter_label, CLUTTER_TYPE_ACTOR)
-
 /* Probably move into main */
 static PangoContext *_context = NULL;
 
@@ -66,7 +64,7 @@ enum
 };
 
 #define CLUTTER_LABEL_GET_PRIVATE(obj) \
-(G_TYPE_INSTANCE_GET_PRIVATE ((obj), CLUTTER_TYPE_LABEL, ClutterLabelPrivate))
+(clutter_label_get_instance_private(obj))
 
 typedef struct _ClutterLabelCachedLayout ClutterLabelCachedLayout;
 
@@ -114,6 +112,11 @@ struct _ClutterLabelPrivate
   ClutterLabelCachedLayout cached_layouts[CLUTTER_LABEL_N_CACHED_LAYOUTS];
   guint                 cache_age;
 };
+
+G_DEFINE_TYPE_WITH_CODE (ClutterLabel,
+                         clutter_label,
+                         CLUTTER_TYPE_ACTOR,
+                         G_ADD_PRIVATE (ClutterLabel))
 
 /*
  * clutter_label_create_layout_no_cache:
@@ -615,8 +618,6 @@ clutter_label_class_init (ClutterLabelClass *klass)
                                                          "Whether the contents of the label should be justified",
                                                          FALSE,
                                                          CLUTTER_PARAM_READWRITE));
-
-  g_type_class_add_private (gobject_class, sizeof (ClutterLabelPrivate));
 }
 
 static void

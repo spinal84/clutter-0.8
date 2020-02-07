@@ -41,7 +41,7 @@ json_parser_error_quark (void)
 }
 
 #define JSON_PARSER_GET_PRIVATE(obj) \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((obj), JSON_TYPE_PARSER, JsonParserPrivate))
+        (json_parser_get_instance_private (JSON_PARSER (obj)))
 
 struct _JsonParserPrivate
 {
@@ -126,7 +126,10 @@ enum
 
 static guint parser_signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (JsonParser, json_parser, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (JsonParser,
+                         json_parser,
+                         G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (JsonParser));
 
 static guint json_parse_array  (JsonParser *parser,
                                 GScanner   *scanner,
@@ -159,8 +162,6 @@ static void
 json_parser_class_init (JsonParserClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-
-  g_type_class_add_private (klass, sizeof (JsonParserPrivate));
 
   gobject_class->dispose = json_parser_dispose;
 

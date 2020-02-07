@@ -186,7 +186,7 @@
 typedef struct _ShaderData ShaderData;
 
 #define CLUTTER_ACTOR_GET_PRIVATE(obj) \
-(G_TYPE_INSTANCE_GET_PRIVATE ((obj), CLUTTER_TYPE_ACTOR, ClutterActorPrivate))
+(clutter_actor_get_instance_private (CLUTTER_ACTOR (obj)))
 
 struct _ClutterActorPrivate
 {
@@ -402,6 +402,7 @@ static ClutterActor *
 G_DEFINE_ABSTRACT_TYPE_WITH_CODE (ClutterActor,
                                   clutter_actor,
                                   G_TYPE_INITIALLY_UNOWNED,
+                                  G_ADD_PRIVATE (ClutterActor)
                                   G_IMPLEMENT_INTERFACE (CLUTTER_TYPE_SCRIPTABLE,
                                                          clutter_scriptable_iface_init));
 
@@ -1956,8 +1957,6 @@ clutter_actor_class_init (ClutterActorClass *klass)
   object_class->get_property = clutter_actor_get_property;
   object_class->dispose      = clutter_actor_dispose;
   object_class->finalize     = clutter_actor_finalize;
-
-  g_type_class_add_private (klass, sizeof (ClutterActorPrivate));
 
   /**
    * ClutterActor:x:
@@ -7507,12 +7506,12 @@ clutter_actor_get_stage_if_allow_redraw (ClutterActor *actor)
 
   while (actor && !(CLUTTER_PRIVATE_FLAGS (actor) & CLUTTER_ACTOR_IS_TOPLEVEL))
     {
-      if (!CLUTTER_ACTOR_GET_PRIVATE(actor)->allow_redraw)
+      if (!actor->priv->allow_redraw)
         return NULL;
       actor = clutter_actor_get_parent (actor);
     }
   /* Check the stage itself for the allow_redraw flag */
-  if (actor && !CLUTTER_ACTOR_GET_PRIVATE(actor)->allow_redraw)
+  if (actor && !actor->priv->allow_redraw)
     return NULL;
 
   return actor;

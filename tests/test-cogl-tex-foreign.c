@@ -61,10 +61,13 @@ G_END_DECLS
 /* Coglbox private declaration
  *--------------------------------------------------*/
 
-G_DEFINE_TYPE (TestCoglbox, test_coglbox, CLUTTER_TYPE_ACTOR);
+G_DEFINE_TYPE_WITH_CODE (TestCoglbox,
+                         test_coglbox,
+                         CLUTTER_TYPE_ACTOR,
+                         G_ADD_PRIVATE (TestCoglbox));
 
 #define TEST_COGLBOX_GET_PRIVATE(obj) \
-(G_TYPE_INSTANCE_GET_PRIVATE ((obj), TEST_TYPE_COGLBOX, TestCoglboxPrivate))
+(test_coglbox_get_instance_private (obj))
 
 struct _TestCoglboxPrivate
 {
@@ -177,8 +180,6 @@ test_coglbox_class_init (TestCoglboxClass *klass)
   gobject_class->finalize     = test_coglbox_finalize;
   gobject_class->dispose      = test_coglbox_dispose;  
   actor_class->paint          = test_coglbox_paint;
-  
-  g_type_class_add_private (gobject_class, sizeof (TestCoglboxPrivate));
 }
 
 ClutterActor*

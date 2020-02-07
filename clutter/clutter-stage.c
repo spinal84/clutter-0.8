@@ -102,11 +102,6 @@
 /* ----------------------------------------------------------------------*/
 /* ----------------------------------------------------------------------*/
 
-G_DEFINE_TYPE (ClutterStage, clutter_stage, CLUTTER_TYPE_GROUP);
-
-#define CLUTTER_STAGE_GET_PRIVATE(obj) \
-(G_TYPE_INSTANCE_GET_PRIVATE ((obj), CLUTTER_TYPE_STAGE, ClutterStagePrivate))
-
 struct _ClutterStagePrivate
 {
   /* the stage implementation */
@@ -135,6 +130,14 @@ struct _ClutterStagePrivate
   guint is_user_resizable : 1;
   guint use_fog           : 1;
 };
+
+G_DEFINE_TYPE_WITH_CODE (ClutterStage,
+                         clutter_stage,
+                         CLUTTER_TYPE_GROUP,
+                         G_ADD_PRIVATE (ClutterStage));
+
+#define CLUTTER_STAGE_GET_PRIVATE(obj) \
+(clutter_stage_get_instance_private (obj))
 
 enum
 {
@@ -823,8 +826,6 @@ clutter_stage_class_init (ClutterStageClass *klass)
 		  G_TYPE_NONE, 0);
 
   klass->fullscreen = clutter_stage_real_fullscreen;
-
-  g_type_class_add_private (gobject_class, sizeof (ClutterStagePrivate));
 }
 
 static void

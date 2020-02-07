@@ -454,17 +454,6 @@ clutter_bezier_adjust (ClutterBezier * b, ClutterKnot * knot, guint indx)
 
 static void clutter_scriptable_iface_init (ClutterScriptableIface *iface);
 
-G_DEFINE_TYPE_WITH_CODE (ClutterBehaviourBspline, 
-                         clutter_behaviour_bspline,
-	                 CLUTTER_TYPE_BEHAVIOUR,
-                         G_IMPLEMENT_INTERFACE (CLUTTER_TYPE_SCRIPTABLE,
-                                                clutter_scriptable_iface_init));
-
-#define CLUTTER_BEHAVIOUR_BSPLINE_GET_PRIVATE(obj)    \
-              (G_TYPE_INSTANCE_GET_PRIVATE ((obj),    \
-               CLUTTER_TYPE_BEHAVIOUR_BSPLINE,        \
-               ClutterBehaviourBsplinePrivate))
-
 enum
   {
     KNOT_REACHED,
@@ -502,6 +491,16 @@ struct _ClutterBehaviourBsplinePrivate
    */
   GArray * point_stack;
 };
+
+G_DEFINE_TYPE_WITH_CODE (ClutterBehaviourBspline,
+                         clutter_behaviour_bspline,
+	                 CLUTTER_TYPE_BEHAVIOUR,
+                         G_ADD_PRIVATE (ClutterBehaviourBspline)
+                         G_IMPLEMENT_INTERFACE (CLUTTER_TYPE_SCRIPTABLE,
+                                                clutter_scriptable_iface_init));
+
+#define CLUTTER_BEHAVIOUR_BSPLINE_GET_PRIVATE(obj)    \
+              (clutter_behaviour_bspline_get_instance_private (obj))
 
 static void 
 clutter_behaviour_bspline_finalize (GObject *object)
@@ -620,8 +619,6 @@ clutter_behaviour_bspline_class_init (ClutterBehaviourBsplineClass *klass)
                   clutter_marshal_VOID__BOXED,
                   G_TYPE_NONE, 1,
                   CLUTTER_TYPE_KNOT);
-  
-  g_type_class_add_private (klass, sizeof (ClutterBehaviourBsplinePrivate));
 }
 
 static void

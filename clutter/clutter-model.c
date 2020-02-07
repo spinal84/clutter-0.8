@@ -134,8 +134,6 @@
 #include "clutter-debug.h"
 
 
-G_DEFINE_ABSTRACT_TYPE (ClutterModel, clutter_model, G_TYPE_OBJECT);
-
 enum
 {
   ROW_ADDED,
@@ -149,9 +147,6 @@ enum
 };
 
 static guint model_signals[LAST_SIGNAL] = { 0, };
-
-#define CLUTTER_MODEL_GET_PRIVATE(obj) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((obj), CLUTTER_TYPE_MODEL, ClutterModelPrivate))
 
 struct _ClutterModelPrivate
 {
@@ -168,6 +163,14 @@ struct _ClutterModelPrivate
   gpointer                sort_data;
   GDestroyNotify          sort_notify;
 };
+
+G_DEFINE_ABSTRACT_TYPE_WITH_CODE (ClutterModel,
+                                  clutter_model,
+                                  G_TYPE_OBJECT,
+                                  G_ADD_PRIVATE (ClutterModel));
+
+#define CLUTTER_MODEL_GET_PRIVATE(obj) \
+  (clutter_model_get_instance_private(obj))
 
 static GType
 clutter_model_real_get_column_type (ClutterModel *model,
@@ -255,8 +258,6 @@ clutter_model_class_init (ClutterModelClass *klass)
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
   gobject_class->finalize = clutter_model_finalize;
-
-  g_type_class_add_private (gobject_class, sizeof (ClutterModelPrivate));
 
   klass->get_column_name  = clutter_model_real_get_column_name;
   klass->get_column_type  = clutter_model_real_get_column_type;
@@ -1369,12 +1370,6 @@ clutter_model_set_filter (ClutterModel           *model,
  * #ClutterModelIter is available since Clutter 0.6
  */
 
-G_DEFINE_ABSTRACT_TYPE (ClutterModelIter, clutter_model_iter, G_TYPE_OBJECT);
-
-#define CLUTTER_MODEL_ITER_GET_PRIVATE(obj) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-  CLUTTER_TYPE_MODEL_ITER, ClutterModelIterPrivate))
-
 struct _ClutterModelIterPrivate
 {
   ClutterModel  *model;
@@ -1383,6 +1378,14 @@ struct _ClutterModelIterPrivate
 
   guint ignore_sort : 1;
 };
+
+G_DEFINE_ABSTRACT_TYPE_WITH_CODE (ClutterModelIter,
+                                  clutter_model_iter,
+                                  G_TYPE_OBJECT,
+                                  G_ADD_PRIVATE (ClutterModelIter));
+
+#define CLUTTER_MODEL_ITER_GET_PRIVATE(obj) \
+  (clutter_model_iter_get_instance_private(obj))
 
 enum
 {
@@ -1571,8 +1574,6 @@ clutter_model_iter_class_init (ClutterModelIterClass *klass)
                                                       "The row to which the iterator points to",
                                                       0, G_MAXUINT, 0,
                                                       CLUTTER_PARAM_READWRITE));
-  
-  g_type_class_add_private (gobject_class, sizeof (ClutterModelIterPrivate));
 }
 
 static void

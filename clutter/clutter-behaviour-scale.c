@@ -46,10 +46,6 @@
 
 #include <math.h>
 
-G_DEFINE_TYPE (ClutterBehaviourScale,
-               clutter_behaviour_scale,
-	       CLUTTER_TYPE_BEHAVIOUR);
-
 struct _ClutterBehaviourScalePrivate
 {
   ClutterFixed x_scale_start;
@@ -58,10 +54,13 @@ struct _ClutterBehaviourScalePrivate
   ClutterFixed y_scale_end;
 };
 
+G_DEFINE_TYPE_WITH_CODE (ClutterBehaviourScale,
+                         clutter_behaviour_scale,
+                         CLUTTER_TYPE_BEHAVIOUR,
+                         G_ADD_PRIVATE (ClutterBehaviourScale));
+
 #define CLUTTER_BEHAVIOUR_SCALE_GET_PRIVATE(obj)        \
-              (G_TYPE_INSTANCE_GET_PRIVATE ((obj),      \
-               CLUTTER_TYPE_BEHAVIOUR_SCALE,            \
-               ClutterBehaviourScalePrivate))
+              (clutter_behaviour_scale_get_instance_private (obj))
 
 enum
 {
@@ -265,8 +264,6 @@ clutter_behaviour_scale_class_init (ClutterBehaviourScaleClass *klass)
                                                         CLUTTER_PARAM_READWRITE));
 
   behave_class->alpha_notify = clutter_behaviour_scale_alpha_notify;
-
-  g_type_class_add_private (klass, sizeof (ClutterBehaviourScalePrivate));
 }
 
 static void

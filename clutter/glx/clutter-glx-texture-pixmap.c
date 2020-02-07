@@ -95,9 +95,10 @@ clutter_glx_texture_pixmap_create_glx_pixmap (ClutterGLXTexturePixmap *tex);
 
 static ClutterX11TexturePixmapClass *parent_class = NULL;
 
-G_DEFINE_TYPE (ClutterGLXTexturePixmap,    \
-               clutter_glx_texture_pixmap, \
-               CLUTTER_X11_TYPE_TEXTURE_PIXMAP);
+G_DEFINE_TYPE_WITH_CODE (ClutterGLXTexturePixmap,    \
+                         clutter_glx_texture_pixmap, \
+                         CLUTTER_X11_TYPE_TEXTURE_PIXMAP,
+                         G_ADD_PRIVATE (ClutterGLXTexturePixmap));
 
 static gboolean
 texture_bind (ClutterGLXTexturePixmap *tex)
@@ -121,9 +122,7 @@ texture_bind (ClutterGLXTexturePixmap *tex)
 static void
 clutter_glx_texture_pixmap_init (ClutterGLXTexturePixmap *self)
 {
-  self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
-                                            CLUTTER_GLX_TYPE_TEXTURE_PIXMAP,
-                                            ClutterGLXTexturePixmapPrivate);
+  self->priv = clutter_glx_texture_pixmap_get_instance_private (self);
 
   if (_ext_check_done == FALSE)
     {
@@ -614,8 +613,6 @@ clutter_glx_texture_pixmap_class_init (ClutterGLXTexturePixmapClass *klass)
   ClutterActorClass            *actor_class = CLUTTER_ACTOR_CLASS (klass);
   ClutterX11TexturePixmapClass *x11_texture_class =
       CLUTTER_X11_TEXTURE_PIXMAP_CLASS (klass);
-
-  g_type_class_add_private (klass, sizeof (ClutterGLXTexturePixmapPrivate));
 
   parent_class = g_type_class_peek_parent(klass);
 

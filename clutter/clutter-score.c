@@ -109,7 +109,7 @@ struct _ClutterScoreEntry
   GNode *node;
 };
 
-#define CLUTTER_SCORE_GET_PRIVATE(obj)  (G_TYPE_INSTANCE_GET_PRIVATE ((obj), CLUTTER_TYPE_SCORE, ClutterScorePrivate))
+#define CLUTTER_SCORE_GET_PRIVATE(obj)  (clutter_score_get_instance_private (CLUTTER_SCORE (obj)))
 
 struct _ClutterScorePrivate
 {
@@ -144,7 +144,10 @@ enum
 
 static inline void clutter_score_clear (ClutterScore *score);
 
-G_DEFINE_TYPE (ClutterScore, clutter_score, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (ClutterScore,
+                         clutter_score,
+                         G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (ClutterScore));
 
 static int score_signals[LAST_SIGNAL] = { 0 }; 
 
@@ -207,8 +210,6 @@ clutter_score_class_init (ClutterScoreClass *klass)
   gobject_class->set_property = clutter_score_set_property;
   gobject_class->get_property = clutter_score_get_property;
   gobject_class->finalize     = clutter_score_finalize;
-
-  g_type_class_add_private (klass, sizeof (ClutterScorePrivate));
 
   /**
    * ClutterScore:loop:

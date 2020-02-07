@@ -157,10 +157,6 @@ clutter_knot_get_type (void)
   return our_type;
 }
 
-G_DEFINE_ABSTRACT_TYPE (ClutterBehaviour,
-                        clutter_behaviour,
-                        G_TYPE_OBJECT);
-
 struct _ClutterBehaviourPrivate
 {
   ClutterAlpha *alpha;
@@ -168,6 +164,11 @@ struct _ClutterBehaviourPrivate
   guint notify_id;
   GSList *actors;
 };
+
+G_DEFINE_ABSTRACT_TYPE_WITH_CODE (ClutterBehaviour,
+                                  clutter_behaviour,
+                                  G_TYPE_OBJECT,
+                                  G_ADD_PRIVATE (ClutterBehaviour));
 
 enum
 {
@@ -184,9 +185,7 @@ enum {
 static guint behave_signals[LAST_SIGNAL] = { 0 };
 
 #define CLUTTER_BEHAVIOUR_GET_PRIVATE(obj)         \
-              (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-               CLUTTER_TYPE_BEHAVIOUR,             \
-               ClutterBehaviourPrivate))
+              (clutter_behaviour_get_instance_private(obj))
 
 static void
 clutter_behaviour_dispose (GObject *gobject)
@@ -312,8 +311,6 @@ clutter_behaviour_class_init (ClutterBehaviourClass *klass)
 		  clutter_marshal_VOID__OBJECT,
 		  G_TYPE_NONE, 1,
 		  CLUTTER_TYPE_ACTOR);
-
-  g_type_class_add_private (klass, sizeof (ClutterBehaviourPrivate));
 }
 
 static void

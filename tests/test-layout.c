@@ -43,11 +43,12 @@ static void clutter_container_iface_init (ClutterContainerIface *iface);
 G_DEFINE_TYPE_WITH_CODE (MyThing,
                          my_thing,
                          CLUTTER_TYPE_ACTOR,
+                         G_ADD_PRIVATE (MyThing)
                          G_IMPLEMENT_INTERFACE (CLUTTER_TYPE_CONTAINER,
                                                 clutter_container_iface_init));
 
 #define MY_THING_GET_PRIVATE(obj)    \
-(G_TYPE_INSTANCE_GET_PRIVATE ((obj), MY_TYPE_THING, MyThingPrivate))
+(my_thing_get_instance_private (obj))
 
 struct _MyThingPrivate
 {
@@ -540,8 +541,6 @@ my_thing_class_init (MyThingClass *klass)
                                                          "Use transformed box when allocating",
                                                          FALSE,
                                                          G_PARAM_READWRITE));
-
-  g_type_class_add_private (klass, sizeof (MyThingPrivate));
 }
 
 static void

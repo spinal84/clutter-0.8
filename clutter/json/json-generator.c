@@ -36,7 +36,7 @@
 #include "json-generator.h"
 
 #define JSON_GENERATOR_GET_PRIVATE(obj) \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((obj), JSON_TYPE_GENERATOR, JsonGeneratorPrivate))
+        (json_generator_get_instance_private (JSON_GENERATOR (obj)))
 
 struct _JsonGeneratorPrivate
 {
@@ -70,7 +70,10 @@ static gchar *dump_object (JsonGenerator *generator,
                            JsonObject    *object,
                            gsize         *length);
 
-G_DEFINE_TYPE (JsonGenerator, json_generator, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (JsonGenerator,
+                         json_generator,
+                         G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (JsonGenerator));
 
 static void
 json_generator_finalize (GObject *gobject)
@@ -131,8 +134,6 @@ static void
 json_generator_class_init (JsonGeneratorClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-
-  g_type_class_add_private (klass, sizeof (JsonGeneratorPrivate));
 
   gobject_class->set_property = json_generator_set_property;
   gobject_class->get_property = json_generator_get_property;

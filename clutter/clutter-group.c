@@ -65,19 +65,20 @@ static guint group_signals[LAST_SIGNAL] = { 0 };
 
 static void clutter_container_iface_init (ClutterContainerIface *iface);
 
-G_DEFINE_TYPE_WITH_CODE (ClutterGroup,
-                         clutter_group,
-                         CLUTTER_TYPE_ACTOR,
-                         G_IMPLEMENT_INTERFACE (CLUTTER_TYPE_CONTAINER,
-                                                clutter_container_iface_init));
-
-#define CLUTTER_GROUP_GET_PRIVATE(obj) \
-(G_TYPE_INSTANCE_GET_PRIVATE ((obj), CLUTTER_TYPE_GROUP, ClutterGroupPrivate))
-
 struct _ClutterGroupPrivate
 {
   GList *children;
 };
+
+G_DEFINE_TYPE_WITH_CODE (ClutterGroup,
+                         clutter_group,
+                         CLUTTER_TYPE_ACTOR,
+                         G_ADD_PRIVATE (ClutterGroup)
+                         G_IMPLEMENT_INTERFACE (CLUTTER_TYPE_CONTAINER,
+                                                clutter_container_iface_init));
+
+#define CLUTTER_GROUP_GET_PRIVATE(obj) \
+(clutter_group_get_instance_private(obj))
 
 
 static void
@@ -643,8 +644,6 @@ clutter_group_class_init (ClutterGroupClass *klass)
 		  clutter_marshal_VOID__OBJECT,
 		  G_TYPE_NONE, 1,
 		  CLUTTER_TYPE_ACTOR);
-
-  g_type_class_add_private (object_class, sizeof (ClutterGroupPrivate));
 }
 
 static void

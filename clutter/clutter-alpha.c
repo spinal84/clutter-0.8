@@ -63,9 +63,6 @@
 #include "clutter-private.h"
 #include "clutter-debug.h"
 
-G_DEFINE_TYPE (ClutterAlpha, clutter_alpha, G_TYPE_INITIALLY_UNOWNED);
-
-
 struct _ClutterAlphaPrivate
 {
   ClutterTimeline *timeline;
@@ -75,6 +72,11 @@ struct _ClutterAlphaPrivate
 
   GClosure *closure;
 };
+
+G_DEFINE_TYPE_WITH_CODE (ClutterAlpha,
+                         clutter_alpha,
+                         G_TYPE_INITIALLY_UNOWNED,
+                         G_ADD_PRIVATE (ClutterAlpha));
 
 enum
 {
@@ -175,8 +177,6 @@ clutter_alpha_class_init (ClutterAlphaClass *klass)
   object_class->finalize     = clutter_alpha_finalize;
   object_class->dispose      = clutter_alpha_dispose;
 
-  g_type_class_add_private (klass, sizeof (ClutterAlphaPrivate));
-
   /**
    * ClutterAlpha:timeline:
    *
@@ -212,9 +212,7 @@ clutter_alpha_class_init (ClutterAlphaClass *klass)
 static void
 clutter_alpha_init (ClutterAlpha *self)
 {
-  self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
-					    CLUTTER_TYPE_ALPHA,
-					    ClutterAlphaPrivate);
+  self->priv = clutter_alpha_get_instance_private (self);
 }
 
 /**

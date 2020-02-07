@@ -190,7 +190,7 @@ enum
 };
 
 #define CLUTTER_SCRIPT_GET_PRIVATE(obj) \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((obj), CLUTTER_TYPE_SCRIPT, ClutterScriptPrivate))
+        (clutter_script_get_instance_private (CLUTTER_SCRIPT (obj)))
 
 struct _ClutterScriptPrivate
 {
@@ -207,7 +207,10 @@ struct _ClutterScriptPrivate
   guint is_filename : 1;
 };
 
-G_DEFINE_TYPE (ClutterScript, clutter_script, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (ClutterScript,
+                         clutter_script,
+                         G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (ClutterScript));
 
 static void
 warn_missing_attribute (ClutterScript *script,
@@ -1698,8 +1701,6 @@ static void
 clutter_script_class_init (ClutterScriptClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-
-  g_type_class_add_private (klass, sizeof (ClutterScriptPrivate));
 
   klass->get_type_from_name = clutter_script_real_get_type_from_name;
 

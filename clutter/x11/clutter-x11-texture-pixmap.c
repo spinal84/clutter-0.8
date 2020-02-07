@@ -127,9 +127,10 @@ struct _ClutterX11TexturePixmapPrivate
 static int _damage_event_base = 0;
 
 /* FIXME: Ultimatly with current cogl we should subclass clutter actor */
-G_DEFINE_TYPE (ClutterX11TexturePixmap, \
-               clutter_x11_texture_pixmap, \
-               CLUTTER_TYPE_TEXTURE);
+G_DEFINE_TYPE_WITH_CODE (ClutterX11TexturePixmap, \
+                         clutter_x11_texture_pixmap, \
+                         CLUTTER_TYPE_TEXTURE,
+                         G_ADD_PRIVATE (ClutterX11TexturePixmap));
 
 static gboolean
 check_extensions (ClutterX11TexturePixmap *texture)
@@ -384,10 +385,7 @@ free_damage_resources (ClutterX11TexturePixmap *texture)
 static void
 clutter_x11_texture_pixmap_init (ClutterX11TexturePixmap *self)
 {
-  self->priv =
-      G_TYPE_INSTANCE_GET_PRIVATE (self,
-                                   CLUTTER_X11_TYPE_TEXTURE_PIXMAP,
-                                   ClutterX11TexturePixmapPrivate);
+  self->priv = clutter_x11_texture_pixmap_get_instance_private (self);
 
   if (!check_extensions (self))
     {
@@ -544,8 +542,6 @@ clutter_x11_texture_pixmap_class_init (ClutterX11TexturePixmapClass *klass)
   ClutterActorClass *actor_class = CLUTTER_ACTOR_CLASS (klass);
   GParamSpec        *pspec;
   ClutterBackend    *default_backend;
-
-  g_type_class_add_private (klass, sizeof (ClutterX11TexturePixmapPrivate));
 
   object_class->dispose      = clutter_x11_texture_pixmap_dispose;
   object_class->set_property = clutter_x11_texture_pixmap_set_property;

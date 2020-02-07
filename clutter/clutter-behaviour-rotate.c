@@ -48,10 +48,6 @@
 
 #include <math.h>
 
-G_DEFINE_TYPE (ClutterBehaviourRotate,
-               clutter_behaviour_rotate,
-               CLUTTER_TYPE_BEHAVIOUR);
-
 struct _ClutterBehaviourRotatePrivate
 {
   ClutterFixed angle_start;
@@ -65,10 +61,13 @@ struct _ClutterBehaviourRotatePrivate
   gint center_z;
 };
 
+G_DEFINE_TYPE_WITH_CODE (ClutterBehaviourRotate,
+                         clutter_behaviour_rotate,
+                         CLUTTER_TYPE_BEHAVIOUR,
+                         G_ADD_PRIVATE (ClutterBehaviourRotate));
+
 #define CLUTTER_BEHAVIOUR_ROTATE_GET_PRIVATE(obj) \
-        (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-         CLUTTER_TYPE_BEHAVIOUR_ROTATE, \
-         ClutterBehaviourRotatePrivate))
+        (clutter_behaviour_rotate_get_instance_private (CLUTTER_BEHAVIOUR_ROTATE (obj)))
 
 enum
 {
@@ -356,8 +355,6 @@ clutter_behaviour_rotate_class_init (ClutterBehaviourRotateClass *klass)
                                                      -G_MAXINT, G_MAXINT,
                                                      0,
                                                      CLUTTER_PARAM_READWRITE));
-
-  g_type_class_add_private (klass, sizeof (ClutterBehaviourRotatePrivate));
 }
 
 static void

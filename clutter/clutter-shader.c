@@ -58,8 +58,7 @@
 static GList *clutter_shaders_list = NULL;
 
 #define CLUTTER_SHADER_GET_PRIVATE(obj) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((obj),  \
-   CLUTTER_TYPE_SHADER, ClutterShaderPrivate))
+  (clutter_shader_get_instance_private (obj))
 
 typedef enum {
   CLUTTER_VERTEX_SHADER,
@@ -93,7 +92,10 @@ enum
   PROP_ENABLED
 };
 
-G_DEFINE_TYPE (ClutterShader, clutter_shader, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (ClutterShader,
+                         clutter_shader,
+                         G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (ClutterShader));
 
 const gchar *clutter_shader_get_source (ClutterShader      *shader,
                                         ClutterShaderType   type);
@@ -203,8 +205,6 @@ clutter_shader_class_init (ClutterShaderClass *klass)
   object_class->set_property  = clutter_shader_set_property;
   object_class->get_property  = clutter_shader_get_property;
   object_class->constructor   = clutter_shader_constructor;
-
-  g_type_class_add_private (klass, sizeof (ClutterShaderPrivate));
 
   /**
    * ClutterShader:vertex-source:

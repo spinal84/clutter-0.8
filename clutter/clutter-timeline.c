@@ -91,8 +91,6 @@
 #include "clutter-debug.h"
 #include "clutter-enum-types.h"
 
-G_DEFINE_TYPE (ClutterTimeline, clutter_timeline, G_TYPE_OBJECT);
-
 #define FPS_TO_INTERVAL(f) (1000 / (f))
 #define CLUTTER_TIMELINE_DEFAULT_FPS (clutter_get_default_frame_rate())
 
@@ -120,6 +118,11 @@ struct _ClutterTimelinePrivate
 
   guint loop : 1;
 };
+
+G_DEFINE_TYPE_WITH_CODE (ClutterTimeline,
+                         clutter_timeline,
+                         G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (ClutterTimeline));
 
 typedef struct {
   gchar *name;
@@ -361,8 +364,6 @@ clutter_timeline_class_init (ClutterTimelineClass *klass)
   object_class->finalize     = clutter_timeline_finalize;
   object_class->dispose      = clutter_timeline_dispose;
 
-  g_type_class_add_private (klass, sizeof (ClutterTimelinePrivate));
-
   /**
    * ClutterTimeline:fps:
    *
@@ -563,9 +564,7 @@ clutter_timeline_init (ClutterTimeline *self)
 {
   ClutterTimelinePrivate *priv;
 
-  self->priv = priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
-                                                   CLUTTER_TYPE_TIMELINE,
-                                                   ClutterTimelinePrivate);
+  self->priv = priv = clutter_timeline_get_instance_private (self);
 
   priv->fps = CLUTTER_TIMELINE_DEFAULT_FPS;
   priv->n_frames = 0;

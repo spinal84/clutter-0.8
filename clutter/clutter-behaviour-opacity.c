@@ -54,20 +54,19 @@
  * Since: 0.2
  */
 
-G_DEFINE_TYPE (ClutterBehaviourOpacity,
-               clutter_behaviour_opacity,
-	       CLUTTER_TYPE_BEHAVIOUR);
-
 struct _ClutterBehaviourOpacityPrivate
 {
   guint8 opacity_start;
   guint8 opacity_end;
 };
 
+G_DEFINE_TYPE_WITH_CODE (ClutterBehaviourOpacity,
+                         clutter_behaviour_opacity,
+                         CLUTTER_TYPE_BEHAVIOUR,
+                         G_ADD_PRIVATE (ClutterBehaviourOpacity));
+
 #define CLUTTER_BEHAVIOUR_OPACITY_GET_PRIVATE(obj)    \
-              (G_TYPE_INSTANCE_GET_PRIVATE ((obj),    \
-               CLUTTER_TYPE_BEHAVIOUR_OPACITY,        \
-               ClutterBehaviourOpacityPrivate))
+              (clutter_behaviour_opacity_get_instance_private (obj))
 
 enum
 {
@@ -193,8 +192,6 @@ clutter_behaviour_opacity_class_init (ClutterBehaviourOpacityClass *klass)
                                                       CLUTTER_PARAM_READWRITE));
 
   behave_class->alpha_notify = clutter_behaviour_alpha_notify;
-
-  g_type_class_add_private (klass, sizeof (ClutterBehaviourOpacityPrivate));
 }
 
 static void

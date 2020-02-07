@@ -125,9 +125,10 @@ clutter_eglx_texture_pixmap_freeing_pixmap (ClutterEGLXTexturePixmap *self);
 static ClutterX11TexturePixmapClass *parent_class = NULL;
 static ClutterActorClass *clutter_actor_class = NULL;
 
-G_DEFINE_TYPE (ClutterEGLXTexturePixmap,    \
-               clutter_eglx_texture_pixmap, \
-               CLUTTER_X11_TYPE_TEXTURE_PIXMAP);
+G_DEFINE_TYPE_WITH_CODE (ClutterEGLXTexturePixmap,    \
+                         clutter_eglx_texture_pixmap, \
+                         CLUTTER_X11_TYPE_TEXTURE_PIXMAP,
+                         G_ADD_PRIVATE (ClutterEGLXTexturePixmap));
 
 static void
 print_config_info (EGLConfig conf)
@@ -174,10 +175,7 @@ clutter_eglx_texture_pixmap_init (ClutterEGLXTexturePixmap *self)
 {
   ClutterEGLXTexturePixmapPrivate *priv;
 
-  priv = self->priv =
-      G_TYPE_INSTANCE_GET_PRIVATE (self,
-                                   CLUTTER_EGLX_TYPE_TEXTURE_PIXMAP,
-                                   ClutterEGLXTexturePixmapPrivate);
+  priv = self->priv = clutter_eglx_texture_pixmap_get_instance_private (self);
   priv->egl_surface = EGL_NO_SURFACE;
   priv->use_fallback = FALSE;
   priv->current_pixmap = 0;
@@ -561,8 +559,6 @@ clutter_eglx_texture_pixmap_class_init (ClutterEGLXTexturePixmapClass *klass)
 
   ClutterX11TexturePixmapClass *x11_texture_class =
       CLUTTER_X11_TEXTURE_PIXMAP_CLASS (klass);
-
-  g_type_class_add_private (klass, sizeof (ClutterEGLXTexturePixmapPrivate));
 
   parent_class = g_type_class_peek_parent(klass);
   clutter_actor_class = g_type_class_peek_parent(parent_class);

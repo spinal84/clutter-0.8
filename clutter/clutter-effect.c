@@ -72,13 +72,6 @@ typedef struct ClutterEffectClosure
 }
 ClutterEffectClosure;
 
-G_DEFINE_TYPE (ClutterEffectTemplate, clutter_effect_template, G_TYPE_OBJECT);
-
-#define EFFECT_TEMPLATE_PRIVATE(o)   \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-   CLUTTER_TYPE_EFFECT_TEMPLATE,     \
-   ClutterEffectTemplatePrivate))
-
 struct _ClutterEffectTemplatePrivate
 {
   ClutterTimeline *timeline;
@@ -90,6 +83,14 @@ struct _ClutterEffectTemplatePrivate
   gpointer alpha_data;
   GDestroyNotify alpha_notify;
 };
+
+G_DEFINE_TYPE_WITH_CODE (ClutterEffectTemplate,
+                         clutter_effect_template,
+                         G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (ClutterEffectTemplate));
+
+#define EFFECT_TEMPLATE_PRIVATE(o)   \
+  (clutter_effect_template_get_instance_private(o))
 
 enum
 {
@@ -192,8 +193,6 @@ static void
 clutter_effect_template_class_init (ClutterEffectTemplateClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
-
-  g_type_class_add_private (klass, sizeof (ClutterEffectTemplatePrivate));
 
   object_class->finalize = clutter_effect_template_finalize;
   object_class->dispose = clutter_effect_template_dispose;

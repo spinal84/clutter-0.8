@@ -54,15 +54,6 @@
  *                                                                          *
  ****************************************************************************/
 
-G_DEFINE_TYPE (ClutterBehaviourEllipse,
-               clutter_behaviour_ellipse,
-	       CLUTTER_TYPE_BEHAVIOUR);
-
-#define CLUTTER_BEHAVIOUR_ELLIPSE_GET_PRIVATE(obj)    \
-              (G_TYPE_INSTANCE_GET_PRIVATE ((obj),    \
-               CLUTTER_TYPE_BEHAVIOUR_ELLIPSE,        \
-               ClutterBehaviourEllipsePrivate))
-
 enum
 {
   PROP_0,
@@ -93,6 +84,14 @@ struct _ClutterBehaviourEllipsePrivate
 
   ClutterRotateDirection direction;
 };
+
+G_DEFINE_TYPE_WITH_CODE (ClutterBehaviourEllipse,
+                         clutter_behaviour_ellipse,
+                         CLUTTER_TYPE_BEHAVIOUR,
+                         G_ADD_PRIVATE (ClutterBehaviourEllipse));
+
+#define CLUTTER_BEHAVIOUR_ELLIPSE_GET_PRIVATE(obj)    \
+              (clutter_behaviour_ellipse_get_instance_private (obj))
 
 typedef struct _knot3d
 {
@@ -499,7 +498,6 @@ clutter_behaviour_ellipse_class_init (ClutterBehaviourEllipseClass *klass)
                                                       CLUTTER_TYPE_ROTATE_DIRECTION,
                                                       CLUTTER_ROTATE_CW,
                                                       CLUTTER_PARAM_READWRITE));
-  g_type_class_add_private (klass, sizeof (ClutterBehaviourEllipsePrivate));
 }
 
 static void

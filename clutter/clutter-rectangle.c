@@ -40,8 +40,6 @@
 
 #include "cogl/cogl.h"
 
-G_DEFINE_TYPE (ClutterRectangle, clutter_rectangle, CLUTTER_TYPE_ACTOR);
-
 enum
 {
   PROP_0,
@@ -55,7 +53,7 @@ enum
 };
 
 #define CLUTTER_RECTANGLE_GET_PRIVATE(obj) \
-(G_TYPE_INSTANCE_GET_PRIVATE ((obj), CLUTTER_TYPE_RECTANGLE, ClutterRectanglePrivate))
+(clutter_rectangle_get_instance_private (obj))
 
 struct _ClutterRectanglePrivate
 {
@@ -66,6 +64,11 @@ struct _ClutterRectanglePrivate
 
   guint has_border : 1;
 };
+
+G_DEFINE_TYPE_WITH_CODE (ClutterRectangle,
+                         clutter_rectangle,
+                         CLUTTER_TYPE_ACTOR,
+                         G_ADD_PRIVATE (ClutterRectangle));
 
 static void
 clutter_rectangle_paint (ClutterActor *self)
@@ -292,8 +295,6 @@ clutter_rectangle_class_init (ClutterRectangleClass *klass)
                                                          "Whether the rectangle should have a border",
                                                          FALSE,
                                                          CLUTTER_PARAM_READWRITE));
-
-  g_type_class_add_private (gobject_class, sizeof (ClutterRectanglePrivate));
 }
 
 static void

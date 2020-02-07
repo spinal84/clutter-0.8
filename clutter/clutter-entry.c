@@ -55,8 +55,6 @@
 #define ENTRY_CURSOR_WIDTH      1
 #define ENTRY_PADDING           5
 
-G_DEFINE_TYPE (ClutterEntry, clutter_entry, CLUTTER_TYPE_ACTOR);
-
 /* Probably move into main */
 static PangoContext         *_context  = NULL;
 
@@ -88,7 +86,7 @@ enum
 static guint entry_signals[LAST_SIGNAL] = { 0, };
 
 #define CLUTTER_ENTRY_GET_PRIVATE(obj) \
-(G_TYPE_INSTANCE_GET_PRIVATE ((obj), CLUTTER_TYPE_ENTRY, ClutterEntryPrivate))
+(clutter_entry_get_instance_private(obj))
 
 struct _ClutterEntryPrivate
 {
@@ -130,6 +128,11 @@ struct _ClutterEntryPrivate
   ClutterGeometry       cursor_pos;
   gboolean              show_cursor;
 };
+
+G_DEFINE_TYPE_WITH_CODE (ClutterEntry,
+                         clutter_entry,
+                         CLUTTER_TYPE_ACTOR,
+                         G_ADD_PRIVATE (ClutterEntry));
 
 static void
 clutter_entry_set_entry_padding (ClutterEntry *entry,
@@ -877,8 +880,6 @@ clutter_entry_class_init (ClutterEntryClass *klass)
 		  NULL, NULL,
 		  clutter_marshal_VOID__VOID,
 		  G_TYPE_NONE, 0);
-
-  g_type_class_add_private (gobject_class, sizeof (ClutterEntryPrivate));
 }
 
 static void

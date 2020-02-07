@@ -46,15 +46,16 @@
  * #ClutterBehaviourDepth is available since Clutter 0.4.
  */
 
-G_DEFINE_TYPE (ClutterBehaviourDepth,
-               clutter_behaviour_depth,
-               CLUTTER_TYPE_BEHAVIOUR);
-
 struct _ClutterBehaviourDepthPrivate
 {
   gint depth_start;
   gint depth_end;
 };
+
+G_DEFINE_TYPE_WITH_CODE (ClutterBehaviourDepth,
+                         clutter_behaviour_depth,
+                         CLUTTER_TYPE_BEHAVIOUR,
+                         G_ADD_PRIVATE (ClutterBehaviourDepth));
 
 enum
 {
@@ -154,8 +155,6 @@ clutter_behaviour_depth_class_init (ClutterBehaviourDepthClass *klass)
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
   ClutterBehaviourClass *behaviour_class = CLUTTER_BEHAVIOUR_CLASS (klass);
 
-  g_type_class_add_private (klass, sizeof (ClutterBehaviourDepthPrivate));
-
   gobject_class->set_property = clutter_behaviour_depth_set_property;
   gobject_class->get_property = clutter_behaviour_depth_get_property;
 
@@ -195,9 +194,7 @@ clutter_behaviour_depth_class_init (ClutterBehaviourDepthClass *klass)
 static void
 clutter_behaviour_depth_init (ClutterBehaviourDepth *depth)
 {
-  depth->priv = G_TYPE_INSTANCE_GET_PRIVATE (depth,
-                                             CLUTTER_TYPE_BEHAVIOUR_DEPTH,
-                                             ClutterBehaviourDepthPrivate);
+  depth->priv = clutter_behaviour_depth_get_instance_private (depth);
 }
 
 /**

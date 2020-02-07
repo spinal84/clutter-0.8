@@ -54,19 +54,20 @@ enum
   PROP_REPEAT_X
 };
 
-G_DEFINE_TYPE (ClutterCloneTexture,
-	       clutter_clone_texture,
-	       CLUTTER_TYPE_ACTOR);
-
-#define CLUTTER_CLONE_TEXTURE_GET_PRIVATE(obj) \
-(G_TYPE_INSTANCE_GET_PRIVATE ((obj), CLUTTER_TYPE_CLONE_TEXTURE, ClutterCloneTexturePrivate))
-
 struct _ClutterCloneTexturePrivate
 {
   ClutterTexture      *parent_texture;
   guint                repeat_x : 1;
   guint                repeat_y : 1;
 };
+
+G_DEFINE_TYPE_WITH_CODE (ClutterCloneTexture,
+                         clutter_clone_texture,
+                         CLUTTER_TYPE_ACTOR,
+                         G_ADD_PRIVATE (ClutterCloneTexture));
+
+#define CLUTTER_CLONE_TEXTURE_GET_PRIVATE(obj) \
+(clutter_clone_texture_get_instance_private (obj))
 
 static void
 clutter_clone_texture_get_preferred_width (ClutterActor *self,
@@ -362,8 +363,6 @@ clutter_clone_texture_class_init (ClutterCloneTextureClass *klass)
 			   "in y direction.",
 			   FALSE,
 			   CLUTTER_PARAM_READWRITE));
-
-  g_type_class_add_private (gobject_class, sizeof (ClutterCloneTexturePrivate));
 }
 
 static void

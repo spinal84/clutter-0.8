@@ -66,22 +66,21 @@
 
 static void clutter_scriptable_iface_init (ClutterScriptableIface *iface);
 
-G_DEFINE_TYPE_WITH_CODE (ClutterBehaviourPath,
-                         clutter_behaviour_path,
-	                 CLUTTER_TYPE_BEHAVIOUR,
-                         G_IMPLEMENT_INTERFACE (CLUTTER_TYPE_SCRIPTABLE,
-                                                clutter_scriptable_iface_init));
-
 struct _ClutterBehaviourPathPrivate
 {
   GSList      *knots;
   ClutterKnot *last_knot_passed;
 };
 
+G_DEFINE_TYPE_WITH_CODE (ClutterBehaviourPath,
+                         clutter_behaviour_path,
+	                 CLUTTER_TYPE_BEHAVIOUR,
+                         G_ADD_PRIVATE (ClutterBehaviourPath)
+                         G_IMPLEMENT_INTERFACE (CLUTTER_TYPE_SCRIPTABLE,
+                                                clutter_scriptable_iface_init));
+
 #define CLUTTER_BEHAVIOUR_PATH_GET_PRIVATE(obj)    \
-              (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-               CLUTTER_TYPE_BEHAVIOUR_PATH,        \
-               ClutterBehaviourPathPrivate))
+              (clutter_behaviour_path_get_instance_private (obj))
 
 enum
 {
@@ -340,8 +339,6 @@ clutter_behaviour_path_class_init (ClutterBehaviourPathClass *klass)
                   CLUTTER_TYPE_KNOT);
 
   behave_class->alpha_notify = clutter_behaviour_path_alpha_notify;
-
-  g_type_class_add_private (klass, sizeof (ClutterBehaviourPathPrivate));
 }
 
 static void

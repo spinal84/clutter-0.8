@@ -46,11 +46,6 @@
 #include "clutter-fixed.h"
 #include "clutter-private.h"
 
-G_DEFINE_ABSTRACT_TYPE (ClutterBackend, clutter_backend, G_TYPE_OBJECT);
-
-#define CLUTTER_BACKEND_GET_PRIVATE(obj) \
-(G_TYPE_INSTANCE_GET_PRIVATE ((obj), CLUTTER_TYPE_BACKEND, ClutterBackendPrivate))
-
 struct _ClutterBackendPrivate
 {
   /* settings */
@@ -61,6 +56,14 @@ struct _ClutterBackendPrivate
 
   cairo_font_options_t *font_options;
 };
+
+G_DEFINE_ABSTRACT_TYPE_WITH_CODE (ClutterBackend,
+                                  clutter_backend,
+                                  G_TYPE_OBJECT,
+                                  G_ADD_PRIVATE (ClutterBackend));
+
+#define CLUTTER_BACKEND_GET_PRIVATE(obj) \
+(clutter_backend_get_instance_private (CLUTTER_BACKEND (obj)))
 
 static void
 clutter_backend_dispose (GObject *gobject)
@@ -87,8 +90,6 @@ clutter_backend_class_init (ClutterBackendClass *klass)
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
   gobject_class->dispose = clutter_backend_dispose;
-
-  g_type_class_add_private (gobject_class, sizeof (ClutterBackendPrivate));
 }
 
 static void

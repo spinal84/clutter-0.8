@@ -1,3 +1,9 @@
+clutter (0.8.2.70) unstable; urgency=medium
+
+  * Port to Debian Buster: fix compilation warnings
+
+ -- Arthur Demchenkov <spinal.by@gmail.com>  Fri, 07 Feb 2020 13:16:31 +0300
+
 clutter (0.8.2.69) unstable; urgency=medium
 
   * Release for Maemo Leste

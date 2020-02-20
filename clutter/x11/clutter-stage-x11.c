@@ -563,8 +563,8 @@ clutter_stage_x11_init (ClutterStageX11 *stage)
   stage->xscreen = 0;
 
   stage->xwin = None;
-  stage->xwin_width = 800;
-  stage->xwin_height = 480;
+  stage->xwin_width = 960;
+  stage->xwin_height = 540;
   stage->xvisinfo = None;
 
   stage->is_foreign_xwin = FALSE;

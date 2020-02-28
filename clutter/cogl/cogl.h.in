@@ -74,6 +74,10 @@ G_BEGIN_DECLS
  * @COGL_PIXEL_FORMAT_A_8:
  * @COGL_PIXEL_FORMAT_RGB_888:
  * @COGL_PIXEL_FORMAT_BGR_888:
+ * @COGL_PIXEL_FORMAT_RGBX_8888:
+ * @COGL_PIXEL_FORMAT_BGRX_8888:
+ * @COGL_PIXEL_FORMAT_XRGB_8888:
+ * @COGL_PIXEL_FORMAT_XBGR_8888:
  * @COGL_PIXEL_FORMAT_RGBA_8888:
  * @COGL_PIXEL_FORMAT_BGRA_8888:
  * @COGL_PIXEL_FORMAT_ARGB_8888:
@@ -121,6 +125,18 @@ typedef enum
 
   COGL_PIXEL_FORMAT_BGR_888       = (COGL_PIXEL_FORMAT_24 |
                                      COGL_BGR_BIT),
+
+  COGL_PIXEL_FORMAT_RGBX_8888     =  COGL_PIXEL_FORMAT_32,
+
+  COGL_PIXEL_FORMAT_BGRX_8888     = (COGL_PIXEL_FORMAT_32 |
+                                     COGL_BGR_BIT),
+
+  COGL_PIXEL_FORMAT_XRGB_8888     = (COGL_PIXEL_FORMAT_32 |
+                                     COGL_AFIRST_BIT),
+
+  COGL_PIXEL_FORMAT_XBGR_8888     = (COGL_PIXEL_FORMAT_32 |
+                                     COGL_BGR_BIT         |
+                                     COGL_AFIRST_BIT),
 
   COGL_PIXEL_FORMAT_RGBA_8888     =  COGL_PIXEL_FORMAT_32 |
                                      COGL_A_BIT,

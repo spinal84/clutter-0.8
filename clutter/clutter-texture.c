@@ -1243,7 +1243,11 @@ clutter_texture_set_from_rgb_data   (ClutterTexture     *texture,
     }
   else
     {
-      if (bpp == 3)
+      if (bpp == 4)
+        {
+          source_format = COGL_PIXEL_FORMAT_RGBX_8888;
+        }
+      else if (bpp == 3)
         {
           source_format = COGL_PIXEL_FORMAT_RGB_888;
         }
@@ -1718,7 +1722,11 @@ clutter_texture_set_area_from_rgb_data (ClutterTexture     *texture,
     }
   else
     {
-      if (bpp == 3)
+      if (bpp == 4)
+        {
+          source_format = COGL_PIXEL_FORMAT_RGBX_8888;
+        }
+      else if (bpp == 3)
         {
           source_format = COGL_PIXEL_FORMAT_RGB_888;
         }

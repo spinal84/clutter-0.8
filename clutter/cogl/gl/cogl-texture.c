@@ -855,11 +855,13 @@ _cogl_pixel_format_to_gl (CoglPixelFormat  format,
       glformat = GL_BGR;
       gltype = GL_UNSIGNED_BYTE;
       break;
+    case COGL_PIXEL_FORMAT_RGBX_8888:
     case COGL_PIXEL_FORMAT_RGBA_8888:
       glintformat = GL_RGBA;
       glformat = GL_RGBA;
       gltype = GL_UNSIGNED_BYTE;
       break;
+    case COGL_PIXEL_FORMAT_BGRX_8888:
     case COGL_PIXEL_FORMAT_BGRA_8888:
       glintformat = GL_RGBA;
       glformat = GL_BGRA;
@@ -869,6 +871,7 @@ _cogl_pixel_format_to_gl (CoglPixelFormat  format,
       /* The following two types of channel ordering
        * have no GL equivalent unless defined using
        * system word byte ordering */
+    case COGL_PIXEL_FORMAT_XRGB_8888:
     case COGL_PIXEL_FORMAT_ARGB_8888:
       glintformat = GL_RGBA;
       glformat = GL_BGRA;
@@ -879,6 +882,7 @@ _cogl_pixel_format_to_gl (CoglPixelFormat  format,
 #endif
       break;
 
+    case COGL_PIXEL_FORMAT_XBGR_8888:
     case COGL_PIXEL_FORMAT_ABGR_8888:
       glintformat = GL_RGBA;
       glformat = GL_RGBA;

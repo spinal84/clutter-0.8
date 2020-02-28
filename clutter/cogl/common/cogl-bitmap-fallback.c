@@ -74,6 +74,24 @@ _cogl_rgb_to_rgba (const guchar *src, guchar *dst)
 }
 
 inline static void
+_cogl_xrgb_to_rgba (const guchar *src, guchar *dst)
+{
+  dst[0] = src[1];
+  dst[1] = src[2];
+  dst[2] = src[3];
+  dst[3] = 255;
+}
+
+inline static void
+_cogl_rgbx_to_rgba (const guchar *src, guchar *dst)
+{
+  dst[0] = src[0];
+  dst[1] = src[1];
+  dst[2] = src[2];
+  dst[3] = 255;
+}
+
+inline static void
 _cogl_argb_to_rgba (const guchar *src, guchar *dst)
 {
   dst[0] = src[1];
@@ -141,6 +159,24 @@ _cogl_rgba_to_rgb (const guchar *src, guchar *dst)
   dst[0] = src[0];
   dst[1] = src[1];
   dst[2] = src[2];
+}
+
+inline static void
+_cogl_rgba_to_xrgb (const guchar *src, guchar *dst)
+{
+  dst[0] = 0;
+  dst[1] = src[0];
+  dst[2] = src[1];
+  dst[3] = src[2];
+}
+
+inline static void
+_cogl_rgba_to_rgbx (const guchar *src, guchar *dst)
+{
+  dst[0] = src[0];
+  dst[1] = src[1];
+  dst[2] = src[2];
+  dst[3] = 0;
 }
 
 inline static void
@@ -284,6 +320,10 @@ _cogl_bitmap_fallback_convert (const CoglBitmap *bmp,
   TRY_CONVERSION(TFROM, rgba4444, !SWAP, COGL_PIXEL_FORMAT_BGRA_4444)  \
   TRY_CONVERSION(TFROM, rgb, SWAP, COGL_PIXEL_FORMAT_RGB_888)  \
   TRY_CONVERSION(TFROM, rgb, !SWAP, COGL_PIXEL_FORMAT_BGR_888)  \
+  TRY_CONVERSION(TFROM, rgbx, SWAP, COGL_PIXEL_FORMAT_RGBX_8888)  \
+  TRY_CONVERSION(TFROM, rgbx, !SWAP, COGL_PIXEL_FORMAT_BGRX_8888)  \
+  TRY_CONVERSION(TFROM, xrgb, SWAP, COGL_PIXEL_FORMAT_XRGB_8888)  \
+  TRY_CONVERSION(TFROM, xrgb, !SWAP, COGL_PIXEL_FORMAT_XBGR_8888)  \
   TRY_CONVERSION(TFROM, rgba, SWAP, COGL_PIXEL_FORMAT_RGBA_8888)  \
   TRY_CONVERSION(TFROM, rgba, !SWAP, COGL_PIXEL_FORMAT_BGRA_8888)  \
   TRY_CONVERSION(TFROM, argb, SWAP, COGL_PIXEL_FORMAT_ARGB_8888)  \
@@ -312,6 +352,14 @@ _cogl_bitmap_fallback_convert (const CoglBitmap *bmp,
     TRY_CONVERSIONS(rgb, FALSE); break;
   case COGL_PIXEL_FORMAT_BGR_888:
     TRY_CONVERSIONS(rgb, TRUE); break;
+  case COGL_PIXEL_FORMAT_RGBX_8888:
+    TRY_CONVERSIONS(rgbx, FALSE); break;
+  case COGL_PIXEL_FORMAT_BGRX_8888:
+    TRY_CONVERSIONS(rgbx, TRUE); break;
+  case COGL_PIXEL_FORMAT_XRGB_8888:
+    TRY_CONVERSIONS(xrgb, FALSE); break;
+  case COGL_PIXEL_FORMAT_XBGR_8888:
+    TRY_CONVERSIONS(xrgb, TRUE); break;
   case COGL_PIXEL_FORMAT_RGBA_8888:
     TRY_CONVERSIONS(rgba, FALSE); break;
   case COGL_PIXEL_FORMAT_BGRA_8888:

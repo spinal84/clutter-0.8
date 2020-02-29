@@ -936,12 +936,6 @@ _cogl_pixel_format_to_gl (CoglPixelFormat  format,
     case COGL_PIXEL_FORMAT_BGRX_8888:
     case COGL_PIXEL_FORMAT_XRGB_8888:
     case COGL_PIXEL_FORMAT_XBGR_8888:
-      glintformat = GL_RGBA;
-      glformat = GL_RGBA;
-      gltype = GL_UNSIGNED_BYTE;
-      required_format = COGL_PIXEL_FORMAT_RGBX_8888;
-      break;
-
     case COGL_PIXEL_FORMAT_RGBA_8888:
     case COGL_PIXEL_FORMAT_BGRA_8888:
     case COGL_PIXEL_FORMAT_ARGB_8888:

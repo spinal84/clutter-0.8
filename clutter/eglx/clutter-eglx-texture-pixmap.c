@@ -177,7 +177,6 @@ clutter_eglx_texture_pixmap_init (ClutterEGLXTexturePixmap *self)
 
   priv = self->priv = clutter_eglx_texture_pixmap_get_instance_private (self);
   priv->egl_surface = EGL_NO_SURFACE;
-  priv->use_fallback = FALSE;
   priv->current_pixmap = 0;
   priv->current_pixmap_depth = 0;
   priv->current_pixmap_width = 0;
@@ -205,6 +204,8 @@ clutter_eglx_texture_pixmap_init (ClutterEGLXTexturePixmap *self)
 
       _ext_check_done = TRUE;
     }
+
+  priv->use_fallback = !_have_tex_from_pixmap_ext;
 
   /* We need to know when the pixmap is about to be freed, so we can
    * eglDestroySurface before it's gone */
@@ -285,7 +286,7 @@ clutter_eglx_texture_pixmap_surface_create (ClutterActor *actor)
   if (priv->use_fallback)
     {
       g_debug ("%s: texture from pixmap appears unsupported", __FUNCTION__);
-      CLUTTER_NOTE (TEXTURE, "Falling back to X11 manual mechansim");
+      CLUTTER_NOTE (TEXTURE, "Falling back to X11 manual mechanism");
 
       CLUTTER_ACTOR_CLASS (clutter_eglx_texture_pixmap_parent_class)->
         realize (actor);
@@ -338,12 +339,16 @@ clutter_eglx_texture_pixmap_surface_create (ClutterActor *actor)
   if (priv->egl_surface == EGL_NO_SURFACE)
     {
       g_warning ("%s: error %x, failed to create %s surface for %lx, "
-                 "using GLES fallback.",
+                 "using X11 fallback.",
 	       __FUNCTION__, eglGetError (),
 	       pixmap ? "pixmap" : "window",
 	       pixmap ? pixmap : window);
 
       priv->use_fallback = TRUE;
+
+      CLUTTER_ACTOR_CLASS (clutter_eglx_texture_pixmap_parent_class)->
+        realize (actor);
+
       return;
     }
 
@@ -382,6 +387,10 @@ clutter_eglx_texture_pixmap_surface_create (ClutterActor *actor)
 
       CLUTTER_NOTE (TEXTURE, "Falling back to X11 manual mechanism");
       priv->use_fallback = TRUE;
+
+      CLUTTER_ACTOR_CLASS (clutter_eglx_texture_pixmap_parent_class)->
+        realize (actor);
+
       return;
     }
 }

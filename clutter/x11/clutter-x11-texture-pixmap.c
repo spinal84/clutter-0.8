@@ -107,18 +107,17 @@ struct _ClutterX11TexturePixmapPrivate
   XImage       *image;
   XShmSegmentInfo shminfo;
 
-  gboolean      automatic_updates;
-
   Damage        damage;
   Drawable      damage_drawable;
 
-  /* FIXME: lots of gbooleans. coalesce into bitfields */
-  gboolean	have_shm;
-  gboolean      window_mapped;
-  gboolean      destroyed;
-  gboolean      owns_pixmap;
-  gboolean      override_redirect;
-  gboolean      allow_alpha;
+  guint         automatic_updates : 1;
+  guint         have_shm : 1;
+  guint         window_mapped : 1;
+  guint         destroyed : 1;
+  guint         owns_pixmap : 1;
+  guint         override_redirect : 1;
+  guint         allow_alpha : 1;
+
   gint          window_x, window_y;
 
   GList         *shapes;

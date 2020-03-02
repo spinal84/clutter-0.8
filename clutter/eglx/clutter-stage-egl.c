@@ -74,7 +74,7 @@ static void
 clutter_stage_print_config(const char *name, EGLConfig config)
 {
   EGLint red = -1, green = -1, blue = -1, alpha = -1, stencil = -1;
-  EGLint rgba_bindable = -1, rgb_bindable = -1;
+  EGLint rgba_bindable = -1, rgb_bindable = -1, config_id = -1;
 
   eglGetConfigAttrib (clutter_eglx_display (),
                       config,
@@ -97,8 +97,11 @@ clutter_stage_print_config(const char *name, EGLConfig config)
   eglGetConfigAttrib (clutter_eglx_display (),
                       config,
                       EGL_BIND_TO_TEXTURE_RGBA, &rgba_bindable);
-  g_debug ("%s: %s R:%d G:%d B:%d A:%d S:%d RGB:%d RGBA:%d",
-           __FUNCTION__, name,
+  eglGetConfigAttrib (clutter_eglx_display (),
+                      config,
+                      EGL_CONFIG_ID, &config_id);
+  g_debug ("%s: %s ID:0x%x R:%d G:%d B:%d A:%d S:%d RGB:%d RGBA:%d",
+           __FUNCTION__, name, config_id,
            red, green, blue, alpha, stencil,
            rgb_bindable, rgba_bindable);
 }

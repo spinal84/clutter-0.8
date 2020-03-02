@@ -135,7 +135,7 @@ print_config_info (EGLConfig conf)
 {
 #if DEBUG_PRINT_CONFIGS
   EGLint red = -1, green = -1, blue = -1, alpha = -1, stencil = -1;
-  EGLint rgba_bindable = -1, rgb_bindable = -1, tex_target = -1;
+  EGLint rgba_bindable = -1, rgb_bindable = -1, tex_target = -1, config_id = -1;
 
   if (!conf) return;
 
@@ -163,8 +163,11 @@ print_config_info (EGLConfig conf)
   eglGetConfigAttrib (clutter_eglx_display (),
 		      conf,
 		      EGL_TEXTURE_TARGET, &tex_target);
-  g_debug ("%s: R:%d G:%d B:%d A:%d S:%d RGB:%d RGBA:%d TEX:%d",
-	   __FUNCTION__,
+  eglGetConfigAttrib (clutter_eglx_display (),
+		      conf,
+		      EGL_CONFIG_ID, &config_id);
+  g_debug ("%s: ID:0x%x R:%d G:%d B:%d A:%d S:%d RGB:%d RGBA:%d TEX:%d",
+	   __FUNCTION__, config_id,
 	   red, green, blue, alpha, stencil,
 	   rgb_bindable, rgba_bindable, tex_target);
 #endif

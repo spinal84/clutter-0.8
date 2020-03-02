@@ -67,17 +67,6 @@
 
 #include "cogl/cogl.h"
 
-typedef void    (*BindTexImage) (EGLDisplay dpy,
-				 EGLSurface surface,
-				 EGLint buffer);
-typedef void    (*ReleaseTexImage) (EGLDisplay dpy,
-				    EGLSurface surface,
-				    EGLint buffer);
-
-/*
-static BindTexImage      _gl_bind_tex_image = NULL;
-static ReleaseTexImage   _gl_release_tex_image = NULL;
-*/
 static gboolean          _have_tex_from_pixmap_ext = FALSE;
 static gboolean          _ext_check_done = FALSE;
 
@@ -393,8 +382,6 @@ clutter_eglx_texture_pixmap_surface_create (ClutterActor *actor)
 
       CLUTTER_ACTOR_CLASS (clutter_eglx_texture_pixmap_parent_class)->
         realize (actor);
-
-      return;
     }
 }
 
@@ -787,4 +774,3 @@ clutter_eglx_texture_pixmap_paint (ClutterActor *actor)
                 (unsigned int)priv->egl_surface, eglGetError ());
     }
 }
-

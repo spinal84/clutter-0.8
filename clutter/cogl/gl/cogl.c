@@ -955,6 +955,11 @@ _cogl_features_init ()
       flags |= COGL_FEATURE_TEXTURE_PVRTC;
     }
 
+  if (cogl_check_extension ("GL_OES_EGL_image", gl_extensions))
+    {
+      flags |= COGL_FEATURE_TEXTURE_EGLIMAGE;
+    }
+
   if (cogl_check_extension ("GL_ARB_shader_objects", gl_extensions) &&
       cogl_check_extension ("GL_ARB_vertex_shader", gl_extensions) &&
       cogl_check_extension ("GL_ARB_fragment_shader", gl_extensions))

@@ -68,11 +68,17 @@
 #include "cogl/cogl.h"
 
 static gboolean          _have_tex_from_pixmap_ext = FALSE;
+static gboolean          _have_egl_image_tfp_ext = FALSE;
 static gboolean          _ext_check_done = FALSE;
+
+PFNEGLCREATEIMAGEKHRPROC eglCreateImageKHR;
+PFNEGLDESTROYIMAGEKHRPROC eglDestroyImageKHR;
+PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glEGLImageTargetTexture2DOES;
 
 struct _ClutterEGLXTexturePixmapPrivate
 {
   EGLSurface    egl_surface;
+  EGLImageKHR   egl_image;
 
   gboolean      use_fallback;
 
@@ -83,6 +89,7 @@ struct _ClutterEGLXTexturePixmapPrivate
 
   /* If the pixmap has changed, we'll want to try and recreate the surface */
   gboolean      pixmap_changed;
+  gboolean      pixmap_bound;
 
   gboolean      dispose_called;
 };
@@ -103,10 +110,10 @@ clutter_eglx_get_eglconfig (EGLDisplay *display,
                             int depth);
 
 static void
-clutter_eglx_texture_pixmap_surface_create (ClutterActor *actor);
+clutter_eglx_texture_pixmap_bind (ClutterActor *actor);
 
 static void
-clutter_eglx_texture_pixmap_surface_destroy (ClutterActor *actor);
+clutter_eglx_texture_pixmap_unbind (ClutterActor *actor);
 
 static void
 clutter_eglx_texture_pixmap_freeing_pixmap (ClutterEGLXTexturePixmap *self);
@@ -169,6 +176,8 @@ clutter_eglx_texture_pixmap_init (ClutterEGLXTexturePixmap *self)
 
   priv = self->priv = clutter_eglx_texture_pixmap_get_instance_private (self);
   priv->egl_surface = EGL_NO_SURFACE;
+  priv->egl_image = EGL_NO_IMAGE_KHR;
+  priv->pixmap_bound = FALSE;
   priv->current_pixmap = 0;
   priv->current_pixmap_depth = 0;
   priv->current_pixmap_width = 0;
@@ -193,11 +202,31 @@ clutter_eglx_texture_pixmap_init (ClutterEGLXTexturePixmap *self)
           g_debug("%s: found EGL_NOKIA_texture_from_pixmap", __FUNCTION__);
           _have_tex_from_pixmap_ext = TRUE;
         }
+      else
+        {
+          g_debug("%s: checking for EGLImage 'texture from pixmap' ability", __FUNCTION__);
+          if (cogl_check_extension ("EGL_KHR_image_pixmap", eglx_extensions) &&
+              cogl_features_available(COGL_FEATURE_TEXTURE_EGLIMAGE))
+          {
+            g_debug("%s: found EGL_KHR_image_pixmap & GL_OES_EGL_image", __FUNCTION__);
+
+            eglCreateImageKHR = (PFNEGLCREATEIMAGEKHRPROC)
+              eglGetProcAddress ("eglCreateImageKHR");
+
+            eglDestroyImageKHR = (PFNEGLDESTROYIMAGEKHRPROC)
+              eglGetProcAddress ("eglDestroyImageKHR");
+
+            glEGLImageTargetTexture2DOES = (PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)
+              eglGetProcAddress ("glEGLImageTargetTexture2DOES");
+
+            _have_egl_image_tfp_ext = TRUE;
+          }
+        }
 
       _ext_check_done = TRUE;
     }
 
-  priv->use_fallback = !_have_tex_from_pixmap_ext;
+  priv->use_fallback = !_have_tex_from_pixmap_ext && !_have_egl_image_tfp_ext;
 
   /* We need to know when the pixmap is about to be freed, so we can
    * eglDestroySurface before it's gone */
@@ -215,8 +244,8 @@ clutter_eglx_texture_pixmap_dispose (GObject *object)
   /* this dispose handler is called twice because of how
    * clutter_actor_destroy works */
 
-  if (priv->egl_surface != EGL_NO_SURFACE)
-    clutter_eglx_texture_pixmap_surface_destroy(CLUTTER_ACTOR(object));
+  if (priv->pixmap_bound)
+    clutter_eglx_texture_pixmap_unbind(CLUTTER_ACTOR(object));
 
   /* Texture deletion is now handled by the CoglTexture */
 
@@ -254,7 +283,7 @@ create_cogl_texture (ClutterTexture *texture,
 }
 
 static void
-clutter_eglx_texture_pixmap_surface_create (ClutterActor *actor)
+clutter_eglx_texture_pixmap_bind (ClutterActor *actor)
 {
   ClutterEGLXTexturePixmapPrivate *priv;
   Pixmap                          pixmap;
@@ -302,49 +331,83 @@ clutter_eglx_texture_pixmap_surface_create (ClutterActor *actor)
         CLUTTER_X11_TEXTURE_PIXMAP(actor)))
     has_alpha = FALSE;
 
-  if (pixmap)
-    {
-      EGLConfig conf = clutter_eglx_get_eglconfig (
-                                backend->edpy, &priv->egl_surface,
-                                pixmap, has_alpha);
-      print_config_info (conf);
-    }
-  else
+  if (_have_tex_from_pixmap_ext)
     {
       EGLConfig conf;
 
-      clutter_x11_trap_x_errors ();
-      pixmap = XCompositeNameWindowPixmap (clutter_x11_get_default_display (),
-		      			   window);
-      if (clutter_x11_untrap_x_errors ())
+      if (pixmap)
         {
-          g_warning ("%s: XCompositeNameWindowPixmap failed for window %lx",
-		   __FUNCTION__, window);
-	  return;
-	}
-      conf = clutter_eglx_get_eglconfig (
-                        backend->edpy, &priv->egl_surface,
-                        pixmap, has_alpha);
-      print_config_info (conf);
-    }
+          conf = clutter_eglx_get_eglconfig (backend->edpy, &priv->egl_surface,
+                                             pixmap, has_alpha);
+          print_config_info (conf);
+        }
+      else
+        {
+          clutter_x11_trap_x_errors ();
+          pixmap = XCompositeNameWindowPixmap (clutter_x11_get_default_display (),
+                                               window);
+          if (clutter_x11_untrap_x_errors ())
+            {
+              g_warning ("%s: XCompositeNameWindowPixmap failed for window %lx",
+                         __FUNCTION__, window);
+              return;
+            }
+        conf = clutter_eglx_get_eglconfig (backend->edpy, &priv->egl_surface,
+                                           pixmap, has_alpha);
+        print_config_info (conf);
+      }
 
-  if (priv->egl_surface == EGL_NO_SURFACE)
+      if (priv->egl_surface == EGL_NO_SURFACE)
+        {
+          g_warning ("%s: error %x, failed to create %s surface for %lx, "
+                     "using X11 fallback.",
+                     __FUNCTION__, eglGetError (),
+                     pixmap ? "pixmap" : "window",
+                     pixmap ? pixmap : window);
+
+          priv->use_fallback = TRUE;
+
+          CLUTTER_ACTOR_CLASS (clutter_eglx_texture_pixmap_parent_class)->
+            realize (actor);
+
+          return;
+        }
+    }
+  else  /* _have_egl_image_tfp_ext */
     {
-      g_warning ("%s: error %x, failed to create %s surface for %lx, "
-                 "using X11 fallback.",
-	       __FUNCTION__, eglGetError (),
-	       pixmap ? "pixmap" : "window",
-	       pixmap ? pixmap : window);
+      const EGLint img_attribs[] = {
+        EGL_IMAGE_PRESERVED_KHR, EGL_TRUE,
+        EGL_NONE
+      };
 
-      priv->use_fallback = TRUE;
+      priv->egl_image = eglCreateImageKHR(backend->edpy,
+                                          EGL_NO_CONTEXT,
+                                          EGL_NATIVE_PIXMAP_KHR,
+                                          (EGLClientBuffer)pixmap,
+                                          img_attribs);
 
-      CLUTTER_ACTOR_CLASS (clutter_eglx_texture_pixmap_parent_class)->
-        realize (actor);
+      if (priv->egl_image == EGL_NO_IMAGE)
+        {
+          g_warning ("%s: error %x, failed to create %s EGLImageKHR for %lx, "
+                     "using X11 fallback.",
+                     __FUNCTION__, eglGetError (),
+                     pixmap ? "pixmap" : "window",
+                     pixmap ? pixmap : window);
 
-      return;
+          priv->use_fallback = TRUE;
+
+          CLUTTER_ACTOR_CLASS (clutter_eglx_texture_pixmap_parent_class)->
+            realize (actor);
+
+          return;
+        }
     }
 
-  /* bind the surface to a GL texture */
+  /* If we got here, we should have priv->egl_surface or priv->egl_image
+   * set from pixmap */
+  priv->pixmap_bound = TRUE;
+
+  /* Bind to a GL texture */
   glGenTextures (1, &texture_id);
   glBindTexture (GL_TEXTURE_2D, texture_id);
 
@@ -366,7 +429,7 @@ clutter_eglx_texture_pixmap_surface_create (ClutterActor *actor)
     }
   else
     {
-      g_debug ("%s: surface format is EGL_TEXTURE_RGBA", __FUNCTION__);
+      g_debug ("%s: texture format is EGL_TEXTURE_RGBA", __FUNCTION__);
       format = COGL_PIXEL_FORMAT_RGBA_8888;
     }
 
@@ -386,7 +449,7 @@ clutter_eglx_texture_pixmap_surface_create (ClutterActor *actor)
 }
 
 static void
-clutter_eglx_texture_pixmap_surface_destroy (ClutterActor *actor)
+clutter_eglx_texture_pixmap_unbind (ClutterActor *actor)
 {
   ClutterEGLXTexturePixmapPrivate *priv;
   ClutterBackendEGL		  *backend;
@@ -409,6 +472,13 @@ clutter_eglx_texture_pixmap_surface_destroy (ClutterActor *actor)
         g_debug ("%s: X errors", __FUNCTION__);
       priv->egl_surface = EGL_NO_SURFACE;
     }
+  else if (priv->egl_image != EGL_NO_IMAGE_KHR)
+    {
+      eglDestroyImageKHR(backend->edpy, priv->egl_image);
+      priv->egl_image = EGL_NO_IMAGE_KHR;
+    }
+
+  priv->pixmap_bound = FALSE;
 
   /* It looks like we can keep the old texture as clutter
    * will free it anyway if we unrealise or set a new texture  */
@@ -420,8 +490,8 @@ static void clutter_eglx_texture_pixmap_freeing_pixmap (ClutterEGLXTexturePixmap
   /** We need to ensure that we get rid of the surface before the pixmap
    * is XFreePixmap'd. The pixmap will be set to 0 or the new value right
    * after, so we'll be notified to create a new surface if we need to. */
-  if (priv->egl_surface != EGL_NO_SURFACE)
-    clutter_eglx_texture_pixmap_surface_destroy(CLUTTER_ACTOR(self));
+  if (priv->pixmap_bound)
+    clutter_eglx_texture_pixmap_unbind(CLUTTER_ACTOR(self));
 }
 
 static const EGLint pixmap_creation_config_rgb[] = {
@@ -532,12 +602,12 @@ clutter_eglx_texture_pixmap_update_area (ClutterX11TexturePixmap *texture,
       pixmap_depth != priv->current_pixmap_depth ||
       pixmap_width != priv->current_pixmap_width ||
       pixmap_height != priv->current_pixmap_height ||
-      priv->egl_surface == EGL_NO_SURFACE)
+      !priv->pixmap_bound)
     {
       priv->pixmap_changed = TRUE;
     }
 
-  if (/*priv->egl_surface != EGL_NO_SURFACE
+  if (/*priv->pixmap_bound
       && */CLUTTER_ACTOR_IS_VISIBLE (CLUTTER_ACTOR (texture)))
     clutter_actor_queue_redraw (CLUTTER_ACTOR (texture));
 }
@@ -583,7 +653,7 @@ clutter_eglx_texture_pixmap_class_init (ClutterEGLXTexturePixmapClass *klass)
 gboolean
 clutter_eglx_texture_pixmap_using_extension (ClutterEGLXTexturePixmap *texture)
 {
-  return _have_tex_from_pixmap_ext;
+  return _have_tex_from_pixmap_ext || _have_egl_image_tfp_ext;
   /* Assume NPOT TFP's are supported even if regular NPOT isn't advertised
    * but tfp is. Seemingly some Intel drivers do this ?
   */
@@ -686,9 +756,9 @@ clutter_eglx_texture_pixmap_paint (ClutterActor *actor)
 
   if (priv->pixmap_changed) {
     priv->pixmap_changed = FALSE;
-    g_debug ("%s: Pixmap has changed, destroying surface", __FUNCTION__);
-    clutter_eglx_texture_pixmap_surface_destroy(actor);
-    clutter_eglx_texture_pixmap_surface_create(actor);
+    g_debug ("%s: Pixmap has changed, rebinding", __FUNCTION__);
+    clutter_eglx_texture_pixmap_unbind(actor);
+    clutter_eglx_texture_pixmap_bind(actor);
   }
 
   if (priv->use_fallback)
@@ -712,7 +782,7 @@ clutter_eglx_texture_pixmap_paint (ClutterActor *actor)
 
   handle = clutter_texture_get_cogl_texture(CLUTTER_TEXTURE(actor));
 
-  if (priv->egl_surface == EGL_NO_SURFACE ||
+  if (!priv->pixmap_bound ||
       handle == COGL_INVALID_HANDLE)
     {
       /*
@@ -735,7 +805,7 @@ clutter_eglx_texture_pixmap_paint (ClutterActor *actor)
        pixmap_depth != priv->current_pixmap_depth ||
        pixmap_width != priv->current_pixmap_width ||
        pixmap_height != priv->current_pixmap_height) &&
-       priv->egl_surface != EGL_NO_SURFACE)
+       priv->pixmap_bound)
     {
       g_warning ("%s: Pixmap has changed but update not called, returning",
                 __FUNCTION__);
@@ -751,22 +821,27 @@ clutter_eglx_texture_pixmap_paint (ClutterActor *actor)
   glEnable (GL_TEXTURE_2D);
   glBindTexture (GL_TEXTURE_2D, texture_id);
 
-  if (eglBindTexImage (clutter_eglx_display (),
-                       priv->egl_surface,
-                       EGL_BACK_BUFFER) == EGL_FALSE)
+  if (_have_tex_from_pixmap_ext)
     {
-      g_debug ("%s: eglBindTexImage(disp, %x) failed (tex %x): %x",
-               __FUNCTION__, (unsigned int)priv->egl_surface,
-               texture_id, eglGetError ());
-      do_release = 0;
+      if (eglBindTexImage (clutter_eglx_display (),
+                           priv->egl_surface,
+                           EGL_BACK_BUFFER) == EGL_FALSE)
+        {
+          g_debug ("%s: eglBindTexImage(disp, %x) failed (tex %x): %x",
+                   __FUNCTION__, (unsigned int)priv->egl_surface,
+                   texture_id, eglGetError ());
+          do_release = 0;
+        }
     }
+  else  /* _have_egl_image_tfp_ext */
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, priv->egl_image);
 
   if (clutter_x11_untrap_x_errors ())
     g_debug ("%s: X errors", __FUNCTION__);
 
   CLUTTER_ACTOR_CLASS(clutter_actor_class)->paint(actor);
 
-  if (do_release &&
+  if (_have_tex_from_pixmap_ext && do_release &&
       eglReleaseTexImage (clutter_eglx_display (), priv->egl_surface,
                         EGL_BACK_BUFFER) == EGL_FALSE)
     {

@@ -198,6 +198,7 @@ typedef enum
  * @COGL_FEATURE_FOUR_CLIP_PLANES:
  * @COGL_FEATURE_STENCIL_BUFFER:
  * @COGL_FEATURE_TEXTURE_PVRTC:
+ * @COGL_FEATURE_TEXTURE_EGLIMAGE:
  *
  * Flags for the supported features.
  */
@@ -214,6 +215,7 @@ typedef enum
   COGL_FEATURE_FOUR_CLIP_PLANES       = (1 << 9),
   COGL_FEATURE_STENCIL_BUFFER         = (1 << 10),
   COGL_FEATURE_TEXTURE_PVRTC	      = (1 << 12),
+  COGL_FEATURE_TEXTURE_EGLIMAGE       = (1 << 13),
 } CoglFeatureFlags;
 
 /**

@@ -24,7 +24,9 @@
 
 #ifdef HAVE_COGL_GLES2
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #include <EGL/egl.h>
+#include <EGL/eglext.h>
 #else /* HAVE_COGL_GLES2 */
 #include <GLES/gl.h>
 #include <GLES/egl.h>

@@ -854,6 +854,11 @@ _cogl_features_init ()
       flags |= COGL_FEATURE_TEXTURE_PVRTC;
     }
 
+  if (cogl_check_extension ("GL_OES_EGL_image", gl_extensions))
+    {
+      flags |= COGL_FEATURE_TEXTURE_EGLIMAGE;
+    }
+
   ctx->feature_flags = flags;
   ctx->features_cached = TRUE;
 }

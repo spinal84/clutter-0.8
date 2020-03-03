@@ -552,9 +552,11 @@ clutter_eglx_get_eglconfig (EGLDisplay *display,
       if (*surface != EGL_NO_SURFACE)
         return configs[i];
 
+#if DEBUG_PRINT_CONFIGS
       g_debug ("%s: eglCreatePixmapSurface failed for config:",
                __FUNCTION__);
       print_config_info (configs[i]);
+#endif
    }
 
    /* We failed to get any surface */

@@ -10,8 +10,13 @@ endif
 
 DEB_CPPFLAGS_MAINT_APPEND += -DG_DEBUG_DISABLE
 DEB_CFLAGS_MAINT_APPEND   += -Winline
+DEB_LDFLAGS_MAINT_APPEND  += -Wl,--as-needed
 
 export DEB_CPPFLAGS_MAINT_APPEND DEB_CFLAGS_MAINT_APPEND
+export DEB_LDFLAGS_MAINT_APPEND
+
+override_dh_autoreconf:
+	dh_autoreconf --as-needed
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
